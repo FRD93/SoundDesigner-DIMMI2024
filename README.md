@@ -1,5 +1,5 @@
 # SoundDesigner-DIMMI2024
-By Francesco Roberto Dani. This repository contains a reduced GPL version of SoundDesigner, released for the article "SoundDesigner: A Framework for Assisted Sound Composition" presented at DIMMI conference held in Trento (IT) in 2024.
+By Francesco Roberto Dani (https://www.francesco-dani.com). This repository contains a reduced GPL version of SoundDesigner, released for the article "SoundDesigner: A Framework for Assisted Sound Composition" presented at DIMMI conference held in Trento (IT) in 2024.
 
 
 # Installation
