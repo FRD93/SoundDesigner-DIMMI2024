@@ -5,9 +5,9 @@ echo "SoundDesigner - ©2024, Francesco Roberto Dani"
 
 # # Linux Installation Process
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # sudo apt-get install python
+        # sudo apt-get install python3.11
         if [[ ! -e "venv" ]]; then
-                python3 -m venv venv
+                python3.11 -m venv venv
         fi
         source venv/bin/activate
         pip install -r requirements.txt
@@ -18,9 +18,9 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
 # # MacOS Installation Process
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-        # brew install python
+        # brew install python3.11
         if [[ ! -e "venv" ]]; then
-                python3 -m venv venv
+                python3.11 -m venv venv
         fi
         source venv/bin/activate
         pip install -r requirements.txt
