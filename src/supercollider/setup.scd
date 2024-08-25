@@ -9,7 +9,7 @@ SuperCollider Setup Process
 
 (
 var path = "".resolveRelative;
-FRDBufferGranulator().writeSynthDef();
+// FRDBufferGranulator().writeSynthDef();
 FRDChimes().writeSynthDef();
 FRDContinuousBufferGranulator(Buffer.alloc(s, 44100)).writeSynthDef();
 FRDContinuousBusGranulator().writeSynthDef();
