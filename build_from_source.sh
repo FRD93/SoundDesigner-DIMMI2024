@@ -5,16 +5,13 @@ echo "SoundDesigner - ©2024, Francesco Roberto Dani"
 
 # # Linux Installation Process
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # sudo apt-get install python3.11
         if [[ ! -e "venv" ]]; then
                 python3.11 -m venv venv
         fi
         source venv/bin/activate
         pip install -r requirements.txt
-        python -m PyInstaller SoundDesigner.spec
-        echo "Working OS: $OSTYPE"
-        echo "Installing..."
-        python -m PyInstaller SoundDesigner.spec
+        echo "Only manual running of python file is supported for Linux. You can start SoundDesigner by running run.sh file."
+
 
 # # MacOS Installation Process
 elif [[ "$OSTYPE" == "darwin"* ]]; then
