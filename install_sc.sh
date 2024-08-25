@@ -14,10 +14,10 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         # # Install SC3-PlugIns
         wget "https://github.com/supercollider/sc3-plugins/releases/download/Version-3.13.0/sc3-plugins-3.13.0-Linux-x64.zip" .
         unzip "./sc3-plugins-3.13.0-Linux-x64.zip"
-        mv -r "./sc3-plugins-3.13.0-Linux-x64" "/usr/share/SuperCollider/Extensions/"
+        mv "./sc3-plugins-3.13.0-Linux-x64" "/usr/share/SuperCollider/Extensions/"
         # # Install FRDSCLib
         git clone https://github.com/FRD93/FRDSClib.git
-        mv -r "FRDSCLib" "/usr/share/SuperCollider/Extensions/"
+        mv "FRDSCLib" "/usr/share/SuperCollider/Extensions/"
         # # Complete Installation of SuperCollider dependent code
         echo "Finishing..."
         /usr/bin/sclang "../src/supercollider/setup.scd"
@@ -32,10 +32,10 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         # Install SC3-PlugIns
         wget "https://github.com/supercollider/sc3-plugins/releases/download/Version-3.13.0/sc3-plugins-3.13.0-macOS.zip" .
         unzip "./sc3-plugins-3.13.0-macOS.zip"
-        mv -r "./sc3-plugins-3.13.0-macOS" "/Library/Application Support/SuperCollider/Extensions/"
+        mv "./sc3-plugins-3.13.0-macOS" "/Library/Application Support/SuperCollider/Extensions/"
         # Install FRDSCLib
         git clone https://github.com/FRD93/FRDSClib.git
-        mv -r "./FRDSCLib" "/Library/Application Support/SuperCollider/Extensions/"
+        mv "./FRDSCLib" "/Library/Application Support/SuperCollider/Extensions/"
         # # Complete Installation of SuperCollider dependent code
         echo "Finishing..."
         /applications/Supercollider.app/Contents/MacOS/sclang "../src/supercollider/setup.scd"
