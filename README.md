@@ -1,5 +1,5 @@
 # SoundDesigner-DIMMI2024
-By Francesco Roberto Dani. This repository contains a reduced GPL version of SoundDesigner, released for DIMMI conference held in Trento (IT) in 2024.
+By Francesco Roberto Dani. This repository contains a reduced GPL version of SoundDesigner, released for the article "SoundDesigner: A Framework for Assisted Sound Composition" presented at DIMMI conference held in Trento (IT) in 2024.
 
 
 # Installation
@@ -39,7 +39,7 @@ Follow the Windows instructions for a manual installation of SoundDesigner withi
 For Windows, you have to manually install dependencies and directly run the main SoundDesigner python file within a python3.11 venv, so do the following:
 - Install SuperCollider and sc3-plugins
 - Install FRDSCLib (can be found at https://github.com/FRD93/FRDSClib)
-- Install python3.11, create a venv and install requirements
+- Install python3.11, create a venv and install requirements ```pip install -r requirements.txt```
 - Run (from inside the venv) ```python graphics.py```
 
 
