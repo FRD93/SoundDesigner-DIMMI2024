@@ -16,6 +16,9 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         unzip sc3-plugins-3.13.0-Linux-x64.zip
         sudo mv lib /usr/share/SuperCollider/Extensions/
         sudo mv share /usr/share/SuperCollider/Extensions/
+        # # Install WSlib
+        git clone https://github.com/supercollider-quarks/wslib.git
+        sudo mv wslib/wslib-classes /usr/share/SuperCollider/Extensions/
         # # Install FRDSClib
         git clone https://github.com/FRD93/FRDSClib.git
         sudo mv FRDSClib /usr/share/SuperCollider/Extensions/
@@ -34,6 +37,9 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         wget "https://github.com/supercollider/sc3-plugins/releases/download/Version-3.13.0/sc3-plugins-3.13.0-macOS.zip" .
         unzip "./sc3-plugins-3.13.0-macOS.zip"
         mv "./sc3-plugins-3.13.0-macOS" "/Library/Application Support/SuperCollider/Extensions/"
+        # # Install WSlib
+        git clone https://github.com/supercollider-quarks/wslib.git
+        mv "./wslib/wslib-classes" "/Library/Application Support/SuperCollider/Extensions/"
         # Install FRDSCLib
         git clone https://github.com/FRD93/FRDSClib.git
         mv "./FRDSCLib" "/Library/Application Support/SuperCollider/Extensions/"
