@@ -1,0 +1,622 @@
+{
+    "LPF": {
+		"synth_name": "LPF_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "LPF 2CH": {
+		"synth_name": "LPF_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "HPF": {
+		"synth_name": "HPF_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 100,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "HPF 2CH": {
+		"synth_name": "HPF_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 100,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "1st O. Butt. LPF": {
+		"synth_name": "BLowPass_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rq": {
+				"desc": "Reciprocal Q (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "1st O. Butt. LPF 2CH": {
+		"synth_name": "BLowPass_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rq": {
+				"desc": "Reciprocal Q (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "1st O. Butt. HPF": {
+		"synth_name": "BHiPass_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rq": {
+				"desc": "Reciprocal Q (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "1st O. Butt. HPF 2CH": {
+		"synth_name": "BHiPass_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rq": {
+				"desc": "Reciprocal Q (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "4th O. Butt. LPF": {
+		"synth_name": "BLowPass4_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rq": {
+				"desc": "Reciprocal Q (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "4th O. Butt. LPF 2CH": {
+		"synth_name": "BLowPass4_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rq": {
+				"desc": "Reciprocal Q (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "4th O. Butt. HPF": {
+		"synth_name": "BHiPass4_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rq": {
+				"desc": "Reciprocal Q (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "4th O. Butt. HPF 2CH": {
+		"synth_name": "BHiPass4_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rq": {
+				"desc": "Reciprocal Q (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "Low Shelving": {
+		"synth_name": "BLowShelf_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rS": {
+				"desc": "Reciprocal S (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_dB": {
+				"desc": "Attenuation (dB)",
+				"type": "audio",
+				"min": -120,
+				"max": 20,
+				"val": 0,
+				"bus": -1
+			}
+        }
+	},
+    "Low Shelving 2CH": {
+		"synth_name": "BLowShelf_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rS": {
+				"desc": "Reciprocal S (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_dB": {
+				"desc": "Attenuation (dB)",
+				"type": "audio",
+				"min": -120,
+				"max": 20,
+				"val": 0,
+				"bus": -1
+			}
+        }
+	},
+    "Hi Shelving": {
+		"synth_name": "BHiShelf_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rS": {
+				"desc": "Reciprocal S (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_dB": {
+				"desc": "Attenuation (dB)",
+				"type": "audio",
+				"min": -120,
+				"max": 20,
+				"val": 0,
+				"bus": -1
+			}
+        }
+	},
+    "Hi Shelving 2CH": {
+		"synth_name": "BHiShelf_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_rS": {
+				"desc": "Reciprocal S (abs)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_dB": {
+				"desc": "Attenuation (dB)",
+				"type": "audio",
+				"min": -120,
+				"max": 20,
+				"val": 0,
+				"bus": -1
+			}
+        }
+	},
+    "Band Pass": {
+		"synth_name": "BandPass_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_bw": {
+				"desc": "Bandwidth (oct)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "Band Pass 2CH": {
+		"synth_name": "BandPass_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_bw": {
+				"desc": "Bandwidth (oct)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "Band Stop": {
+		"synth_name": "BandStop_1",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_bw": {
+				"desc": "Bandwidth (oct)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "Band Stop 2CH": {
+		"synth_name": "BandStop_2",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"a_cutoff": {
+				"desc": "Cutoff Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 15000,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			},
+            "a_bw": {
+				"desc": "Bandwidth (oct)",
+				"type": "audio",
+				"min": 0.001,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	}
+}

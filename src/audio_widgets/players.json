@@ -1,0 +1,42 @@
+{
+    "Player Stereo": {
+        "synth_name": "SFPlayer2CH",
+        "n_in": 0,
+        "n_out": 2,
+        "args": {
+            "soundfile": {
+                "type": "buffer",
+                "desc": "Path to stereophonic audio file",
+                "val": [0, ""]
+            },
+            "rate": {
+                "type": "float",
+                "desc": "Play speed (2 = duble, 1 = normal, 0.5 = half)",
+                "val": 1.0,
+                "min": -4.0,
+                "max": 4.0
+            },
+            "start_pos": {
+                "type": "float",
+                "desc": "Read start pos (in seconds)",
+                "val": 0.0,
+                "min": 0.0,
+                "max": 180
+            },
+            "loop": {
+                "type": "int",
+                "desc": "Loop the player?",
+                "val": 0,
+                "min": 0,
+                "max": 1
+            },
+            "t_trig":{
+                "type": "trigger",
+                "desc": "Trigger playing",
+                "val": 0,
+                "min": -1,
+                "max": 1
+            }
+        }
+    }
+}

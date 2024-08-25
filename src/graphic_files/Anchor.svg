@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="50"
+   height="50"
+   viewBox="0 0 50 50"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="Anchor.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="12.412702"
+     inkscape:cx="21.510224"
+     inkscape:cy="24.652167"
+     inkscape:window-width="1440"
+     inkscape:window-height="943"
+     inkscape:window-x="181"
+     inkscape:window-y="39"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <!-- Calamita a ferro di cavallo -->
+  <!-- Parte centrale della calamita -->
+  <path
+     d="M 0.57417122,35 V 15 c 0,-5.5228474 4.47715238,-9.9999999 9.99999978,-10 h 10 l 0,7.175191 h -10 c -2.7614236,0 -3.0664965,0.06339 -3.0664965,2.824809 v 20 c 0,2.761424 0.3050729,2.744246 3.0664965,2.744246 h 10 l 0,7.255754 h -10 C 5.0513236,45 0.57417122,40.522847 0.57417122,35 Z"
+     fill="#000000"
+     id="path1"
+     sodipodi:nodetypes="sssccssssccss" />
+  <!-- Estremità sinistra della calamita -->
+  <rect
+     x="-45"
+     y="10.574171"
+     width="7.255754"
+     height="20"
+     fill="#000000"
+     id="rect1"
+     transform="rotate(-90)"
+     style="stroke-width:1.24035" />
+  <rect
+     x="-45"
+     y="35.161125"
+     width="7.255754"
+     height="5"
+     fill="#000000"
+     id="rect2"
+     transform="rotate(-90)" />
+  <!-- Estremità destra della calamita -->
+  <rect
+     x="-12.175191"
+     y="10.574171"
+     width="7.175189"
+     height="20"
+     fill="#000000"
+     id="rect3"
+     transform="rotate(-90)"
+     style="stroke-width:1.24035" />
+  <rect
+     x="-12.175191"
+     y="35.161125"
+     width="7.1751924"
+     height="5"
+     fill="#000000"
+     id="rect4"
+     transform="rotate(-90)" />
+</svg>

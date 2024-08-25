@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="10"
+   height="10"
+   viewBox="0 0 2.6458333 2.6458333"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   sodipodi:docname="Parameter_new.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="50.83295"
+     inkscape:cx="4.367246"
+     inkscape:cy="7.6131721"
+     inkscape:window-width="1440"
+     inkscape:window-height="785"
+     inkscape:window-x="-4"
+     inkscape:window-y="26"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1"
+     showgrid="true">
+    <inkscape:grid
+       id="grid1"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="0.026458333"
+       spacingy="0.026458333"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient3"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#6b7a27;stop-opacity:1;"
+         offset="0"
+         id="stop4" />
+      <stop
+         style="stop-color:#474f1d;stop-opacity:1;"
+         offset="1"
+         id="stop5" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient2"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#717149;stop-opacity:1;"
+         offset="0"
+         id="stop2" />
+      <stop
+         style="stop-color:#484801;stop-opacity:1;"
+         offset="1"
+         id="stop3" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2"
+       id="radialGradient3"
+       cx="1.3229166"
+       cy="0.19843749"
+       fx="1.3229166"
+       fy="0.19843749"
+       r="1.3229166"
+       gradientTransform="matrix(0,-1,0.15,0,0.16802018,2.6464849)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3"
+       id="radialGradient5"
+       cx="1.3227426"
+       cy="1.3889968"
+       fx="1.3227426"
+       fy="1.3889968"
+       r="1.059371"
+       gradientTransform="matrix(0,-1,1.187629,0,-0.26126779,2.6464849)"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad" />
+  </defs>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:url(#radialGradient5);stroke-width:0.132292;stroke-linejoin:round"
+       d="M 0.26393163,2.3819016 H 2.5128899 c 0.099139,0.00953 0.1403482,-0.037381 0.1322917,-0.1322917 l -10e-8,-1.85208331 C 2.6553284,0.29628449 2.60576,0.25795119 2.5128899,0.26523499 H 0.26393163 c -0.0889745,-0.005711 -0.14341336,0.0269076 -0.13229166,0.1322916 V 2.2496099 c -0.009529,0.099139 0.0373814,0.1403482 0.13229166,0.1322917 z"
+       id="path2"
+       inkscape:label="Connettore Interno"
+       sodipodi:nodetypes="ccccccccc" />
+    <path
+       style="display:inline;fill:url(#radialGradient3);stroke-width:0.0935446;stroke-linejoin:round"
+       d="M 0.13163997,2.6464849 H 0.26393163 C 0.35071805,2.6298734 0.38597791,2.5268601 0.3962233,2.3819016 V 0.26523499 C 0.38740386,0.10648509 0.34330671,0.01829049 0.26393163,6.5168859e-4 H 0.13163997 C 0.05622773,0.01978599 0.00771073,0.09823329 -6.5168859e-4,0.26523499 V 2.3819016 C 0.00845294,2.5373998 0.05061251,2.629321 0.13163997,2.6464849 Z"
+       id="path1"
+       sodipodi:nodetypes="ccccccccc"
+       inkscape:label="Connettore Esterno" />
+  </g>
+</svg>

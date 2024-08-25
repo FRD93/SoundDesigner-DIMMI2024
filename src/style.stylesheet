@@ -1,0 +1,209 @@
+QMainWindow {
+    background: app-background;
+}
+
+QLabel#widget-param {
+    font-size: font-size-medium;
+    text-align: center;
+    font-family: font-type;
+    height: widget-param-height;
+    min-height: widget-param-height;
+}
+QLabel#widget-title {
+    font-size: font-size-medium;
+    text-align: center;
+    font-weight: bold;
+    font-family: font-type;
+}
+
+
+QLineEdit#widget-param {
+    font-size: font-size-medium;
+    text-align: center;
+    font-family: font-type;
+    height: widget-param-height;
+    min-height: widget-param-height;
+}
+QLineEdit#widget-param::hover {
+    border : 2px solid green;
+    background : lightgreen;
+}
+QLineEdit#widget-param-readonly {
+    background-color: #7FFF00;
+    font-size: font-size-medium;
+    text-align: center;
+    font-family: font-type;
+    height: widget-param-height;
+    min-height: widget-param-height;
+}
+QLineEdit#widget-title {
+    font-size: font-size-large;
+    text-align: center;
+    font-weight: bold;
+    font-family: font-type;
+}
+
+
+
+
+
+QDoubleSpinBox::hover
+{
+    background-color : lightgreen;
+}
+
+
+
+QPushButton#widget-param {
+    font-size: font-size-medium;
+    text-align: center;
+    font-family: font-type;
+    height: widget-param-height;
+    min-height: widget-param-height;
+    border: 2px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: black;
+}
+
+QPushButton#palette {
+    background-color: white;
+    height: widget-param-height;
+    border: 2px;
+    border-radius: 5px;
+}
+QPushButton#palette:checked {
+    background-color: lightblue;
+    height: widget-param-height;
+    border: 2px;
+    border-radius: 5px;
+}
+
+
+QPushButton::icon {
+    width: 50px;
+    height: 50px;
+}
+
+QSpinBox#widget-param {
+    font-size: font-size-medium;
+    text-align: center;
+    font-family: font-type;
+    min-height: widget-param-height;
+    height: widget-param-height;
+    border: 2px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: black;
+}
+
+QCheckBox#widget-param {
+    font-size: font-size-medium;
+    text-align: center;
+    font-family: font-type;
+    height: widget-param-height;
+    min-height: widget-param-height;
+    border: 2px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: black;
+}
+
+
+QLabel#patch_area {
+    background-color: patch-area-background;
+}
+
+
+QLabel#Audio {
+    background-color: audio-widget-background;
+    border: 4px solid audio-widget-border;
+    border-radius: 10px;
+}
+
+
+QLabel#MIDI {
+    background-color: midi-widget-background;
+    border: 4px solid midi-widget-border;
+    border-radius: 10px;
+}
+
+QLabel#AudioMIDI {
+    background-color: qlineargradient(x1: 0, x2: 1, stop: 0 audio-widget-background, stop: 1 midi-widget-background);
+    border: 4px solid qlineargradient(x1: 0, x2: 1, stop: 0 audio-widget-border, stop: 1 midi-widget-border);
+    border-radius: 10px;
+}
+
+
+QTabWidget QTabBar{
+    background-color: tab-widget-color;
+    font-size: font-size-medium;
+    text-align: center;
+    font-family: font-type;
+}
+
+QTabWidget QTabBar::tab{
+    background-color: tab-widget-tab-color;
+}
+
+QTabWidget QTabBar::tab:selected{
+    background-color: tab-widget-tab-selected-color;
+}
+
+
+
+QToolBar {
+    background: menu-widget-color;
+    spacing: 0px;
+}
+
+QMenu {
+    background: menu-widget-color;
+}
+
+QMenu::item{
+    background-color: menu-widget-item-color;
+    color: black;
+ }
+
+ QMenu::item:hovered{
+    background-color: menu-widget-item-color;
+    color: black;
+ }
+
+ QMenu::item:selected{
+    background-color: menu-widget-item-selected-color;
+    color: black;
+ }
+
+
+ QLabel#curvexy{
+    background-color: curvexy-background-color;
+    margin: 0px;
+    padding: 0px;
+ }
+
+  QLabel#envelope {
+    background-color: envelope-background-color;
+    border: 1px solid midi-widget-border;
+    margin: 0px;
+    padding: 0px;
+ }
+
+ QLabel#widget-curves {
+    font-size: font-size-medium;
+    text-align: center;
+    font-weight: bold;
+    font-family: font-type;
+}
+
+QPushButton#widget-curves-name {
+    font-size: font-size-medium;
+    text-align: left;
+    font-weight: bold;
+    font-family: font-type;
+}
+
+QFrame#curve-param-frame {
+    border: 1px solid black;
+}

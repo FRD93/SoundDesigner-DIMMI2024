@@ -1,0 +1,317 @@
+{
+    "ExpDistortion": {
+		"synth_name": "FRDDistortion",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_distort": {
+				"desc": "Distortion (abs)",
+				"type": "audio",
+				"min": 0.1,
+				"max": 200,
+				"val": 1,
+				"bus": -1
+			},
+			"a_gain": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			}
+		}
+	},
+    "PitchTrackRingModulator": {
+		"synth_name": "PitchTrackRingModulator",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+			"inertia": {
+				"desc": "Rise/Fall Time (sec)",
+				"type": "float",
+				"min": 0.1,
+				"max": 4.0,
+				"val": 1.0
+			},
+            "no_pitch_freq": {
+				"desc": "Default Frequency (Hz)",
+				"type": "float",
+				"min": 20,
+				"max": 20000,
+				"val": 440
+			},
+			"a_gain": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+            "t_trig": {
+				"desc": "Trigger Env (>0)",
+				"type": "trigger",
+				"min": -1.0,
+				"max": 1.0,
+				"val": 0.0
+			}
+		}
+	},
+	"Stoppato": {
+		"synth_name": "Stoppato",
+		"n_in": 1,
+		"n_out": 1,
+		"args": {
+			"a_aggressive": {
+				"desc": "Aggressiveness of stoppato (0.0 to 1.0)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.0,
+				"val": 0.97,
+				"bus": -1
+			},
+			"rise_time": {
+				"desc": "Time of stoppato to take effect (sec)",
+				"type": "float",
+				"min": 0.0,
+				"max": 1.0,
+				"val": 0.3
+			},
+			"fall_time": {
+				"desc": "Time of stoppato to end (sec)",
+				"type": "float",
+				"min": 0.0,
+				"max": 1.0,
+				"val": 0.2
+			}
+		}
+	},
+    "Compressor": {
+		"synth_name": "Compressor",
+		"n_in": 1,
+		"n_out": 1,
+		"args": {
+			"a_threshold": {
+				"desc": "Threshold (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 2.0,
+				"val": 0.5,
+				"bus": -1
+			},
+			"a_slopeBelow": {
+				"desc": "Slope Below (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1,
+				"bus": -1
+			},
+            "a_slopeAbove": {
+				"desc": "Slope Above (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 0.5,
+				"bus": -1
+			},
+            "a_clampTime": {
+				"desc": "Clamp Time (sec)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 0.01,
+				"bus": -1
+			},
+            "a_relaxTime": {
+				"desc": "Relax Time (sec)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 0.01,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "Compressor2CH": {
+		"synth_name": "Compressor2CH",
+		"n_in": 2,
+		"n_out": 2,
+		"args": {
+			"a_threshold": {
+				"desc": "Threshold (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 2.0,
+				"val": 0.5,
+				"bus": -1
+			},
+			"a_slopeBelow": {
+				"desc": "Slope Below (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1,
+				"bus": -1
+			},
+            "a_slopeAbove": {
+				"desc": "Slope Above (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 0.5,
+				"bus": -1
+			},
+            "a_clampTime": {
+				"desc": "Clamp Time (sec)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 0.01,
+				"bus": -1
+			},
+            "a_relaxTime": {
+				"desc": "Relax Time (sec)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 0.01,
+				"bus": -1
+			},
+            "a_gain": {
+				"desc": "Gain (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 4.0,
+				"val": 1.0,
+				"bus": -1
+			}
+        }
+	},
+    "PingPongDelay": {
+		"synth_name": "PingPongDelay",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+            "a_delaytime": {
+				"desc": "Delay Time (sec)",
+				"type": "audio",
+				"min": 0.0001,
+				"max": 1.99,
+				"val": 0.25,
+				"bus": -1
+			},
+			"a_width": {
+				"desc": "Stereo Width (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.0,
+				"val": 0.75,
+				"bus": -1
+			},
+            "a_feedback": {
+				"desc": "Feedback Factor (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.0,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_gain": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			}
+		}
+	},
+    "Chorus": {
+		"synth_name": "Chorus",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+            "a_delaytime": {
+				"desc": "Delay Time (sec)",
+				"type": "audio",
+				"min": 0.0001,
+				"max": 1.99,
+				"val": 0.25,
+				"bus": -1
+			},
+			"a_depth": {
+				"desc": "Depth (abs)",
+				"type": "audio",
+				"min": 0.01,
+				"max": 1.0,
+				"val": 0.01,
+				"bus": -1
+			},
+            "a_rate": {
+				"desc": "Rate (abs)",
+				"type": "audio",
+				"min": 0.01,
+				"max": 4.0,
+				"val": 0.25,
+				"bus": -1
+			},
+			"a_gain": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			}
+		}
+	},
+    "Chorus Stereo": {
+		"synth_name": "Chorus2CH",
+		"n_in": 2,
+        "n_out": 2,
+        "args": {
+            "a_delaytime": {
+				"desc": "Delay Time (sec)",
+				"type": "audio",
+				"min": 0.0001,
+				"max": 1.99,
+				"val": 0.25,
+				"bus": -1
+			},
+			"a_depth": {
+				"desc": "Depth (abs)",
+				"type": "audio",
+				"min": 0.01,
+				"max": 1.0,
+				"val": 0.01,
+				"bus": -1
+			},
+            "a_rate": {
+				"desc": "Rate (abs)",
+				"type": "audio",
+				"min": 0.01,
+				"max": 4.0,
+				"val": 0.25,
+				"bus": -1
+			},
+			"a_gain": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			}
+		}
+	}
+}

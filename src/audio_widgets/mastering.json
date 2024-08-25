@@ -1,0 +1,16 @@
+{
+    "SpectralMastering": {
+        "synth_name": "SpectralMastering",
+        "n_in": 2,
+        "n_out": 2,
+        "args": {
+            "rev_w": {
+                "desc": "Reverb Wet",
+                "type": "float",
+                "val": 0.4,
+                "min": 0.0,
+                "max": 1.0
+            }
+        }
+    }
+}

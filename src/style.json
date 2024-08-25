@@ -1,0 +1,25 @@
+{
+  "colors": {
+    "light_green": "#7FFF00",
+    "almond": "#FFEBCD",
+    "cadet": "#5F9EA0",
+    "coral": "#FF7F50",
+    "golden_rod": "#B8860B",
+    "olive_green": "#556B2F",
+    "dark_orchid": "#9932CC",
+    "dark_turquoise": "#00CED1",
+    "cornflower_blue": "#6495ED",
+    "indian_red": "#CD5C5C"
+  },
+  "text": {
+    "qlabel-small": "QLabel#small { font-size: 6px; text-align: center; font-family: Alasassy Caps; }",
+    "qlabel-medium": "QLabel#medium { font-size: 8px; text-align: center; font-family: Alasassy Caps; }",
+    "qlabel-large": "QLabel#large { font-size: 10px; text-align: center; font-family: Alasassy Caps; }",
+    "qlabel-Large": "QLabel#Lmall { font-size: 12px; text-align: center; font-family: Alasassy Caps; }"
+  },
+  "widgets": {
+    "patch_area": "QLabel#patch_area { background-color: #6495ED; }",
+    "audio_widget": "QLabel#Audio { background-color: #7FFF00; border: 4px solid #556B2F; border-radius: 10px; }",
+    "midi_widget": "QLabel#MIDI { background-color: #CD5C5C; border: 4px solid #556B2F; border-radius: 10px; }"
+  }
+}

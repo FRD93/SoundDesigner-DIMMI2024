@@ -1,0 +1,35 @@
+{
+    "MyFirstSynth": {
+        "synth_name": "FM1",
+        "n_audio_in": 0,
+        "n_audio_out": 1,
+        "n_midi_in": 1,
+        "n_midi_out": 0,
+        "args": {
+            "a_imod": {
+                "desc": "FM Modulation Index",
+                "type": "audio",
+                "val": 1.0,
+                "min": 0.0,
+                "max": 10.0,
+                "bus": -1
+            },
+            "a_gain": {
+                "desc": "Volume Scale",
+                "type": "audio",
+                "val": 0.8,
+                "min": 0.0,
+                "max": 1.2,
+                "bus": -1
+            },
+            "a_pan": {
+                "desc": "Stereo Panning",
+                "type": "audio",
+                "val": 0.0,
+                "min": -1.0,
+                "max": 1.0,
+                "bus": -1
+            }
+        }
+    }
+}

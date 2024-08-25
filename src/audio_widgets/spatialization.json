@@ -1,0 +1,150 @@
+{
+    "Mono To Stereo DBAP": {
+        "synth_name": "Mono2StereoDBAP",
+        "n_in": 1,
+        "n_out": 2,
+        "args": {
+            "a_panning": {
+                "desc": "Stereo Panning (abs)",
+                "type": "audio",
+                "min": -1.0,
+                "max": 1.0,
+                "val": 0.0,
+                "bus": -1
+            },
+            "a_gain": {
+                "desc": "Gain (abs)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 4.0,
+                "val": 1.0,
+                "bus": -1
+            }
+        }
+    },
+    "Mono To Stereo Imager": {
+        "synth_name": "Mono2StereoImager",
+        "n_in": 1,
+        "n_out": 2,
+        "args": {
+            "a_spread": {
+                "desc": "Spread (abs)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 1.0,
+                "val": 0.5,
+                "bus": -1
+            },
+            "a_depth": {
+                "desc": "Depth (abs)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 1.0,
+                "val": 0.5,
+                "bus": -1
+            },
+            "a_width": {
+                "desc": "Width (abs)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 1.0,
+                "val": 0.5,
+                "bus": -1
+            },
+            "a_gain": {
+                "desc": "Gain (abs)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 4.0,
+                "val": 1.0,
+                "bus": -1
+            }
+        }
+    },
+    "Mono To B-Format": {
+        "synth_name": "MonoToBFormat",
+        "n_in": 1,
+        "n_out": 4,
+        "args": {
+            "a_azimuth": {
+                "desc": "Azimuth (radians)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 3.14,
+                "val": 0.0,
+                "bus": -1
+            },
+            "a_elevation": {
+                "desc": "Elevation (radians)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 3.14,
+                "val": 0.0,
+                "bus": -1
+            },
+            "a_gain": {
+                "desc": "Gain (abs)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 4.0,
+                "val": 1.0,
+                "bus": -1
+            }
+        }
+    },
+    "B-Format To Binaural": {
+        "synth_name": "BFormatToBinaural",
+        "n_in": 4,
+        "n_out": 2,
+        "args": {
+            "a_gain": {
+                "desc": "Gain (abs)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 4.0,
+                "val": 1.0,
+                "bus": -1
+            },
+            "hrirW_L": {
+                "desc": "Ambisonics Kernel Buffer:Binaural",
+                "type": "AmbisonicsKernel",
+                "val": -1
+            },
+            "hrirW_R": {
+                "desc": "Ambisonics Kernel Buffer:Binaural",
+                "type": "AmbisonicsKernel",
+                "val": -1
+            },
+            "hrirX_L": {
+                "desc": "Ambisonics Kernel Buffer:Binaural",
+                "type": "AmbisonicsKernel",
+                "val": -1
+            },
+            "hrirX_R": {
+                "desc": "Ambisonics Kernel Buffer:Binaural",
+                "type": "AmbisonicsKernel",
+                "val": -1
+            },
+            "hrirY_L": {
+                "desc": "Ambisonics Kernel Buffer:Binaural",
+                "type": "AmbisonicsKernel",
+                "val": -1
+            },
+            "hrirY_R": {
+                "desc": "Ambisonics Kernel Buffer:Binaural",
+                "type": "AmbisonicsKernel",
+                "val": -1
+            },
+            "hrirZ_L": {
+                "desc": "Ambisonics Kernel Buffer:Binaural",
+                "type": "AmbisonicsKernel",
+                "val": -1
+            },
+            "hrirZ_R": {
+                "desc": "Ambisonics Kernel Buffer:Binaural",
+                "type": "AmbisonicsKernel",
+                "val": -1
+            }
+        }
+    }
+}

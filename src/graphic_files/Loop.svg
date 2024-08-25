@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="50"
+   height="50"
+   viewBox="0 0 50 50"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="Loop.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="14.56"
+     inkscape:cx="24.931319"
+     inkscape:cy="25"
+     inkscape:window-width="1440"
+     inkscape:window-height="943"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <!-- Frecce curve per il loop -->
+  <!-- Frecce a destra -->
+  <path
+     d="m 3.6378538,18.179294 q 19.7768622,-27.7097566 39.5537252,0"
+     fill="none"
+     stroke="#000000"
+     stroke-width="2.93793"
+     marker-end="url(#arrowhead)"
+     id="path1" />
+  <path
+     d="m 45.968453,31.208679 q -19.440537,28.247073 -38.8810712,0"
+     fill="none"
+     stroke="#000000"
+     stroke-width="3.21126"
+     marker-end="url(#arrowhead)"
+     id="path2" />
+  <!-- Corpo del loop -->
+  <!-- Definizione del marcatore della freccia -->
+  <defs
+     id="defs2">
+    <marker
+       id="arrowhead"
+       markerWidth="5"
+       markerHeight="4"
+       refX="2.5"
+       refY="2"
+       orient="auto">
+      <polygon
+         points="0 0, 5 2, 0 4"
+         fill="black"
+         id="polygon2" />
+    </marker>
+  </defs>
+</svg>

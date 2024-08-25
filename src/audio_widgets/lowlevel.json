@@ -1,0 +1,34 @@
+{
+    "Multiply": {
+        "synth_name": "Multiply",
+        "n_in": 2,
+        "n_out": 1,
+        "args": {
+
+        }
+    },
+    "Divide": {
+        "synth_name": "Divide",
+        "n_in": 2,
+        "n_out": 1,
+        "args": {
+
+        }
+    },
+    "Add": {
+        "synth_name": "Add",
+        "n_in": 2,
+        "n_out": 1,
+        "args": {
+
+        }
+    },
+    "Subtract": {
+        "synth_name": "Subtract",
+        "n_in": 2,
+        "n_out": 1,
+        "args": {
+
+        }
+    }
+}

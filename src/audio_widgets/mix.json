@@ -1,0 +1,25 @@
+{
+    "SideChainEfxMONO": {
+		"synth_name": "SideChainEfxMONO",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_follower": {
+				"desc": "Inertia",
+				"type": "audio",
+				"min": 0.001,
+				"max": 1.0,
+				"val": 0.2,
+				"bus": -1
+			},
+			"a_gain": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			}
+		}
+	}
+}

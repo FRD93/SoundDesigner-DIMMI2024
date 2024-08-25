@@ -1,0 +1,142 @@
+{
+    "EnvADSR": {
+		"synth_name": "EnvADSR",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"attack": {
+				"desc": "Attack Time (s)",
+				"type": "float",
+				"min": 0.0,
+				"max": 30.0,
+				"val": 0.01
+			},
+			"decay": {
+				"desc": "Decay Time (s)",
+				"type": "float",
+				"min": 0.0,
+				"max": 30.0,
+				"val": 0.01
+			},
+			"release": {
+				"desc": "Release Time (s)",
+				"type": "float",
+				"min": 0.0,
+				"max": 30.0,
+				"val": 0.5
+			},
+			"sustain": {
+				"desc": "Sustain (abs)",
+				"type": "float",
+				"min": -20000.0,
+				"max": 20000.0,
+				"val": 0.01
+			},
+			"peak": {
+				"desc": "Peak (abs)",
+				"type": "float",
+				"min": -20000.0,
+				"max": 20000.0,
+				"val": 0.5
+			},
+			"bias": {
+				"desc": "Bias (abs)",
+				"type": "float",
+				"min": -20000.0,
+				"max": 20000.0,
+				"val": 0.0
+			},
+			"gate": {
+				"desc": "Gate (>0)",
+				"type": "gate",
+				"min": -1.0,
+				"max": 1.0,
+				"val": -1.0
+			}
+		}
+	},
+	"EnvPerc": {
+		"synth_name": "EnvPerc",
+		"n_in": 0,
+        "n_out": 1,
+		"args": {
+			"attack": {
+				"desc": "Attack Time (s)",
+				"type": "float",
+				"min": 0.0,
+				"max": 60.0,
+				"val": 0.01
+			},
+			"release": {
+				"desc": "Release Time (s)",
+				"type": "float",
+				"min": 0.0,
+				"max": 60.0,
+				"val": 0.5
+			},
+			"peak": {
+				"desc": "Peak (abs)",
+				"type": "float",
+				"min": -20000.0,
+				"max": 20000.0,
+				"val": 0.5
+			},
+			"bias": {
+				"desc": "Bias (abs)",
+				"type": "float",
+				"min": -20000.0,
+				"max": 20000.0,
+				"val": 0.0
+			},
+			"t_gate": {
+				"desc": "Trigger (>0)",
+				"type": "trigger",
+				"min": -1.0,
+				"max": 1.0,
+				"val": 0.0
+			}
+		}
+	},
+	"AmplitudeFollower": {
+		"synth_name": "AmplitudeFollower",
+		"n_in": 1,
+        "n_out": 1,
+		"args": {
+			"rise_t": {
+				"desc": "Rising Time (s)",
+				"type": "float",
+				"min": 0.0001,
+				"max": 6.0,
+				"val": 0.01
+			},
+			"fall_t": {
+				"desc": "Falling Time (s)",
+				"type": "float",
+				"min": 0.0001,
+				"max": 6.0,
+				"val": 0.01
+			}
+		}
+	},
+	"SideChain": {
+		"synth_name": "SideChain",
+		"n_in": 2,
+        "n_out": 1,
+		"args": {
+			"rise_t": {
+				"desc": "Rising Time (s)",
+				"type": "float",
+				"min": 0.0001,
+				"max": 6.0,
+				"val": 0.01
+			},
+			"fall_t": {
+				"desc": "Falling Time (s)",
+				"type": "float",
+				"min": 0.0001,
+				"max": 6.0,
+				"val": 0.01
+			}
+		}
+	}
+}

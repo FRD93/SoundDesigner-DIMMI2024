@@ -1,0 +1,62 @@
+{
+    "Audio Input Mono": {
+        "synth_name": "AudioIn_1",
+        "n_in": 0,
+        "n_out": 1,
+        "in_ch": 0,
+        "args": {
+            "in_ch": {
+                "type": "int",
+                "desc": "Input Channel",
+                "val": 0,
+                "min": 0,
+                "max": 256
+            }
+        }
+    },
+    "Audio Output Mono": {
+        "synth_name": "AudioOut_1",
+        "n_in": 1,
+        "n_out": 0,
+        "out_ch": 0,
+        "args": {
+            "out_ch": {
+                "type": "int",
+                "desc": "Output Channel",
+                "val": 0,
+                "min": 0,
+                "max": 256
+            }
+        }
+    },
+    "SubPatch Input": {
+        "synth_name": "SubPatchAlias",
+        "n_in": 1,
+        "n_out": 1,
+        "label": "sp input",
+        "args": {
+            "name": {
+                "type": "string",
+                "desc": "Input Name",
+                "val": "Input",
+                "min": 0,
+                "max": 256
+            }
+        }
+    },
+    "SubPatch Output": {
+        "synth_name": "SubPatchAlias",
+        "n_in": 1,
+        "n_out": 1,
+        "label": "sp output",
+        "args": {
+            "name": {
+                "type": "string",
+                "desc": "Output Name",
+                "val": "Output",
+                "min": 0,
+                "max": 256
+            }
+        }
+    }
+}

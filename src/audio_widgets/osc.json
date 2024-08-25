@@ -1,0 +1,165 @@
+{
+    "SinOsc": {
+		"synth_name": "SinOsc",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"a_freq": {
+				"desc": "Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 440,
+				"bus": -1
+			},
+			"a_mul": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Bias (abs)",
+				"type": "audio",
+				"min": -20000,
+				"max": 20000,
+				"val": 0.0,
+				"bus": -1
+			}
+		}
+	},
+    "Sawtooth": {
+		"synth_name": "LFSaw",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"a_freq": {
+				"desc": "Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 440,
+				"bus": -1
+			},
+			"a_mul": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Bias (abs)",
+				"type": "audio",
+				"min": -20000,
+				"max": 20000,
+				"val": 0.0,
+				"bus": -1
+			}
+		}
+	},
+    "Pulse": {
+		"synth_name": "Pulse",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"a_freq": {
+				"desc": "Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 440,
+				"bus": -1
+			},
+            "a_width": {
+				"desc": "Duty Cycle (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.0,
+				"val": 0.5,
+				"bus": -1
+			},
+			"a_mul": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Bias (abs)",
+				"type": "audio",
+				"min": -20000,
+				"max": 20000,
+				"val": 0.0,
+				"bus": -1
+			}
+		}
+	},
+    "Parabolic": {
+		"synth_name": "LFPar",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"a_freq": {
+				"desc": "Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 440,
+				"bus": -1
+			},
+			"a_mul": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Bias (abs)",
+				"type": "audio",
+				"min": -20000,
+				"max": 20000,
+				"val": 0.0,
+				"bus": -1
+			}
+		}
+	},
+    "Triangular": {
+		"synth_name": "LFTri",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"a_freq": {
+				"desc": "Frequency (Hz)",
+				"type": "audio",
+				"min": 20,
+				"max": 20000,
+				"val": 440,
+				"bus": -1
+			},
+			"a_mul": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Bias (abs)",
+				"type": "audio",
+				"min": -20000,
+				"max": 20000,
+				"val": 0.0,
+				"bus": -1
+			}
+		}
+	}
+}
