@@ -1,9 +1,10 @@
 # SoundDesigner-DIMMI2024
-This repository contains a reduced GPL version of SoundDesigner, released for DIMMI conference held in Trento (IT) in 2024.
+By Francesco Roberto Dani. This repository contains a reduced GPL version of SoundDesigner, released for DIMMI conference held in Trento (IT) in 2024.
+
 
 # Installation
 
-PLEASE downlaod and install Ambisonic Tool Kit separately.
+PLEASE download and install Ambisonic Tool Kit for sc3 separately (https://github.com/ambisonictoolkit/atk-sc3).
 
 ## Linux and macOS
 
