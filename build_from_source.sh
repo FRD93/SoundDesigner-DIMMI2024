@@ -6,6 +6,11 @@ echo "SoundDesigner - ©2024, Francesco Roberto Dani"
 # # Linux Installation Process
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         if [[ ! -e "venv" ]]; then
+                sudo apt install python3.11
+                sudo apt install python3.11-venv
+                wget https://bootstrap.pypa.io/get-pip.py
+                python3.11 get-pip.py
+                rm get-pip.py
                 python3.11 -m venv venv
         fi
         source venv/bin/activate
