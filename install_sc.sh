@@ -16,9 +16,9 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         unzip sc3-plugins-3.13.0-Linux-x64.zip
         sudo mv lib /usr/share/SuperCollider/Extensions/
         sudo mv share /usr/share/SuperCollider/Extensions/
-        # # Install FRDSCLib
+        # # Install FRDSClib
         git clone https://github.com/FRD93/FRDSClib.git
-        sudo mv FRDSCLib /usr/share/SuperCollider/Extensions/
+        sudo mv FRDSClib /usr/share/SuperCollider/Extensions/
         # # Complete Installation of SuperCollider dependent code
         echo "Finishing..."
         /usr/bin/sclang ../src/supercollider/setup.scd
