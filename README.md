@@ -48,7 +48,7 @@ For Windows, you have to manually install dependencies and directly run the main
 # Configuration
 
 PLEASE download and install Ambisonic Tool Kit for sc3 separately (https://github.com/ambisonictoolkit/atk-sc3).
-![Video Demo](tutorials/02%20-%20ATK%20Installation%20Linux%20.gif)
+![Video Demo](tutorials/02%20-%20ATK%20Installation%20Linux.gif)
 
 In this version, SoundDesigner configuration must be made manually. Please review the ```/src/config.ini``` file to check the correctness of all the paths and the first-time-boot hardware_device_name.
 
