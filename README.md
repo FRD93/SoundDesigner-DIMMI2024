@@ -49,7 +49,7 @@ PLEASE download and install Ambisonic Tool Kit for sc3 separately (https://githu
 ![Video Demo](tutorials/02%20-%20ATK%20Installation%20Linux.gif)
 
 In this version, SoundDesigner configuration must be made manually. Please review the ```/src/config.ini``` file to check the correctness of all the paths and the first-time-boot hardware_device_name.
-
+![Video Demo](tutorials/03%20-%20SoundDesigner%20Configuration.gif)
 
 # Usage
 
