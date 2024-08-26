@@ -5,6 +5,7 @@ By Francesco Roberto Dani (https://www.francesco-dani.com). This repository cont
 # Installation
 
 PLEASE download and install Ambisonic Tool Kit for sc3 separately (https://github.com/ambisonictoolkit/atk-sc3).
+[01 - Installation Linux - cut.mp4](tutorials%2F01%20-%20Installation%20Linux%20-%20cut.mp4)
 
 ## Linux and macOS
 

@@ -9,6 +9,7 @@ cd tmp || exit
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         # # Install unzip and SuperCollider
         sudo apt-get update
+        sudo apt install portaudio19-dev
         sudo apt-get install unzip
         sudo apt-get install supercollider-ide
         # # Install SC3-PlugIns
