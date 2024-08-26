@@ -4,14 +4,11 @@ By Francesco Roberto Dani (https://www.francesco-dani.com). This repository cont
 
 # Installation
 
-PLEASE download and install Ambisonic Tool Kit for sc3 separately (https://github.com/ambisonictoolkit/atk-sc3).
-
-
 ## Linux and macOS
 
 Follow the instructions below to install SoundDesigner into your system. Currently supported platforms are MacOS and Linux.
 
-Installation for Linux (better resolution video can be found in ```tutorials/01- 20Installation Linux - cut.mp4```)
+Installation for Linux (better resolution video can be found in ```tutorials/01 - Installation Linux - cut.mp4```)
 ![Video Demo](tutorials/01%20-%20Installation%20Linux%20-%20cut.gif)
 
 
@@ -49,6 +46,9 @@ For Windows, you have to manually install dependencies and directly run the main
 
 
 # Configuration
+
+PLEASE download and install Ambisonic Tool Kit for sc3 separately (https://github.com/ambisonictoolkit/atk-sc3).
+![Video Demo](tutorials/02%20-%20ATK%20Installation%20Linux%20.gif)
 
 In this version, SoundDesigner configuration must be made manually. Please review the ```/src/config.ini``` file to check the correctness of all the paths and the first-time-boot hardware_device_name.
 
