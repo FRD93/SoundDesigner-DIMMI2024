@@ -1,10 +1,7 @@
 """@package classes
 Documentazione delle varie classi
 """
-from PyQt6.QtCore import QThread, pyqtSignal, QObject, QMutex, QWaitCondition, Qt, QCoreApplication, QEventLoop, QEvent, QTimer
-import ms3
 import mido
-from mido import MidiFile, MidiTrack, Message, MetaMessage
 import time
 from datetime import time as dtime
 import numpy as np
@@ -12,9 +9,6 @@ from configparser import ConfigParser
 from copy import deepcopy
 import signal
 from threading import Thread, Event
-import sys
-from PyQt6.QtWidgets import QApplication
-
 from functions import *
 from harmony import *
 from supercollider import *
@@ -33,23 +27,6 @@ except:
 # conf = ConfigParser()
 # conf.read("config.ini")
 # PPQN = conf.getint("GENERAL", "ppqn")
-
-
-class ClockWorker(QObject):
-    update_signal = pyqtSignal(str)
-
-    def __init__(self, clock):
-        super().__init__()
-        self.running = True
-        self.clock = clock
-
-    def clock_event_thread(self):
-        while self.running:
-            self.update_signal.emit("High Priority Thread Started.")
-            # self.clock.clock_event_thread_qt()
-
-    def stop(self):
-        self.running = False
 
 
 class MIDIManager:
@@ -75,11 +52,7 @@ class MIDIManager:
     def connectAll(self):
         self.midi_in_threads = []
         for device in self.midi_in_devices:
-            # if sys.version_info <= (3, 10, 0):
-            #     self.midi_ins.append(rtmidi.RtMidiIn(int(device)))  # Use RtMidiIn for python3.9 and MidiIn for python3.11
-            # else:
             self.midi_ins.append(rtmidi.MidiIn(int(device)))
-            # self.midi_ins[-1].openPort(device)
             self.midi_ins[-1].open_port(device)
             # print("Device:", device)
             self.midi_in_threads.append(MidiInput(device, self, self.region_manager, self.region_line))
@@ -87,10 +60,10 @@ class MIDIManager:
             self.midi_in_threads[-1].start()
             # print("Device:", device, "started.")
         for device in self.midi_out_devices:
-            # self.midi_outs.append(rtmidi.RtMidiOut(int(device)))
             self.midi_outs.append(rtmidi.MidiOut(int(device)))
-            # self.midi_outs[-1].openPort(device)
             self.midi_outs[-1].open_port(device)
+            # TODO: Implement MidiOutput class
+            # self.midi_in_threads.append(MidiOutput(device, self, self.region_manager, self.region_line))
 
     def disconnectAll(self):
         for midiin_thread in self.midi_in_threads:
@@ -111,13 +84,9 @@ class MIDIManager:
 
     def refreshDevices(self):
         self.disconnectAll()
-        # self.midi_in_device_names = [rtmidi.RtMidiIn().getPortName(index) for index in range(rtmidi.RtMidiIn().getPortCount())]
-        # self.midi_in_devices = [index for index in range(rtmidi.RtMidiIn().getPortCount())]
-        # self.midi_out_device_names = [rtmidi.RtMidiOut().getPortName(index) for index in range(rtmidi.RtMidiOut().getPortCount())]
-        # self.midi_out_devices = [index for index in range(rtmidi.RtMidiOut().getPortCount())]
-        self.midi_in_device_names = [rtmidi.MidiIn(index) for index in range(rtmidi.MidiIn().get_port_count())]
+        self.midi_in_device_names = [rtmidi.MidiIn().get_port_name(index) for index in range(rtmidi.MidiIn().get_port_count())]
         self.midi_in_devices = [index for index in range(rtmidi.MidiIn().get_port_count())]
-        self.midi_out_device_names = [rtmidi.MidiOut(index) for index in range(rtmidi.MidiOut().get_port_count())]
+        self.midi_out_device_names = [rtmidi.MidiOut().get_port_name(index) for index in range(rtmidi.MidiOut().get_port_count())]
         self.midi_out_devices = [index for index in range(rtmidi.MidiOut().get_port_count())]
         self.connectAll()
 
@@ -180,12 +149,11 @@ class MidiInput(Thread):
         self.stop_event.set()
 
     def run(self):
-        # if type(self.mididev) == rtmidi.RtMidiIn:
         if type(self.mididev) == rtmidi.MidiIn:
             self.stop_event.clear()
             self.running = True
             while not self.stop_event.is_set():
-                msg = self.mididev.get_message()
+                msg = self.mididev.get_message(100)
                 # print(f"Widgets of device {self.device}: {self.widgets}")
                 if msg:
                     # print(f"Message received from device {self.device}: {msg}")
@@ -241,8 +209,7 @@ class Note:
         return self.midi_note
 
     def noteToFreq(self, note):
-        # return (self.tuning / 32) * (2 ** ((note - 9) / 12))
-        return midicps(note, self.tuning)
+        return (self.tuning / 32) * (2 ** ((note - 9) / 12))
 
     def getFrequency(self):
         return self.noteToFreq(int(self.midi_note))
@@ -293,29 +260,6 @@ class Note:
         print("\tChord:", self.getChord())
         print("\tKey:", self.getKey())
 
-    def tokenize(self, encode_start_time=False, encode_velocity=False, encode_chord=False, encode_key=False):
-        # ATM, notes are described as "note_duration_velocity|chord"
-        note_name = list(MIDI_NOTE_NAMES.keys())[list(MIDI_NOTE_NAMES.values()).index(self.midi_note)]
-        velocity = str(self.velocity)
-        duration = str(self.duration)
-        start_tick = str(self.start_tick)
-        token = "" + note_name + "_" + duration  # Basic note token is expressed as "note_duration"
-        # if encode_start_time:  # TODO: start_time is maybe a  nonsense, remove it from arguments!
-        #     token += ("_" + str(start_tick))
-        if encode_velocity:
-            token += ("_" + velocity)
-        if encode_key:
-            token += ("_" + note2KeySig(self.getKey()))
-        if encode_chord:
-            if self.chord is not None:
-                if isinstance(self.chord, str):
-                    token += ("|" + self.chord)
-                elif isinstance(self.chord, Chord):
-                    token += ("|" + self.chord.getChord())
-            else:
-                token += "|NA"  # No chord found for note -> append "|NA"
-        return token
-
 
 class Chord:
     """
@@ -347,9 +291,6 @@ class Chord:
     def setKey(self, key):
         self.key = key
 
-    def getChordName(self):
-        return getChordFromGradeOfScale(grade=self.getChord(), key=self.getKey())
-
     def getRivolto(self):
         return self.rivolto
 
@@ -369,8 +310,7 @@ class Chord:
         self.next_chord = next_chord
 
     def describe(self):
-        # print("Chord:", getChordFromGradeOfScale(grade=self.getChord(), key=self.getKey()), "(n=" + str(self.getChord()) + ")")
-        print("Chord:", str(self.getChord()))
+        print("Chord:", getChordFromGradeOfScale(grade=self.getChord(), key=self.getKey()), "(n=" + str(self.getChord()) + ")")
         print("\tStartTick:", self.getStartTick())
         print("\tRivolto:", self.getRivolto())
         print("\tPrevious Chord:", self.getPreviousChord())
@@ -383,7 +323,7 @@ class MIDIClip:
 
     arguments:
     - path: path to MIDI file
-    - transpose_to_C: transpose all MIDI clip to Cmaj ? (see transpose funciton in "functions.py" file)
+    - transpose_to_C: transpose to C ?
     - custom_data: if supplied with a dict, it will not read any data from file, but instead it will use this data:
     {
         "name": name to use,
@@ -403,26 +343,21 @@ class MIDIClip:
         self.chords = []
         self.tempo = 0.5
         if custom_data is None:
-            print("custom_data is None")
-            if ".mid" in path:
-                print("Is MIDI File")
-                self.bpm = int(mido.tempo2bpm(self.tempo))
-                self.midi = mido.MidiFile(path)
-                self.name = path.split("/")[-1].split(".")[0]
-                self.instr = self.name.split("_")[0]
-                self.ppqn = self.midi.ticks_per_beat  # self.ppqn is relative to the loaded MIDI file, whereas PPQN refers to the project ppqn. Remember: Notes are converted in PPQN!
-                self.computeBPM()
-                self.computeKey()
-                self.computeChords()
-                self.computeNotes()
-                self.applyKeyChordsOnNotes()
-                self.length = int(mido.second2tick(self.midi.length, self.ppqn, self.tempo) * PPQN / self.ppqn)
-            elif (".mscx" in path) or (".mscz" in path):
-                print("Is MuseScore File")
-                self.parseMuseScoreFile(path)
+            self.bpm = int(mido.tempo2bpm(self.tempo))
+            self.midi = mido.MidiFile(path)
+            self.name = path.split("/")[-1].split(".")[0]
+            self.instr = self.name.split("_")[0]
+            self.ppqn = self.midi.ticks_per_beat
+            self.computeBPM()
+            self.computeKey()
+            self.computeChords()
+            self.computeNotes()
+            self.applyKeyChordsOnNotes()
+            self.length = int(mido.second2tick(self.midi.length, self.ppqn, self.tempo) * PPQN / self.ppqn)
         else:
             self.name = custom_data["name"]
             self.key = custom_data["key"]
+            self.mode = custom_data["mode"]
             self.notes = custom_data["notes"]
             self.chords = custom_data["chords"]
             self.key = keySig2Fund(custom_data["key"])
@@ -432,63 +367,13 @@ class MIDIClip:
             self.ppqn = PPQN
             self.applyKeyChordsOnNotes()
             self.length = int(max([note.getDuration() + note.getStartTick() for note in self.notes]))
+
+        print("self.key:", self.key, "self.mode:", self.mode, "self.ppqn:", self.ppqn, "self.tempo:", self.tempo, "self.length:", self.length)
+        print("Describing notes in file: {}".format(self.name))
+        for note in self.notes:
+            note.describe()
         if transpose_to_C:
             self.transpose(-1 * self.key)
-
-    def parseMuseScoreFile(self, path):
-        print("Parsing MuseScore File...")
-        score = ms3.Score(path)
-        print(score.mscx.notes().columns)
-        print(dir(score.mscx))
-        print(score.mscx.metadata)
-        for label in score.mscx.labels_cfg.items():
-            print("label:", label)
-
-        notes = score.mscx.notes().to_numpy()
-        chords = score.mscx.labels().to_numpy()
-        self.key = 0  # Assume C major scale
-        self.chords = []
-        for chord in chords:
-            data = {"measure": int(chord[0]), "name": chord[11]}
-            intra_measure = [int(a) for a in str(chord[5]).split("/")]
-            if len(intra_measure) == 1:
-                data["intra-measure"] = int(intra_measure[0])
-            else:
-                data["intra-measure"] = intra_measure[0] / intra_measure[1]
-            duration = [int(a) for a in str(chord[10]).split("/")]
-            if len(duration) == 1:
-                duration = int(duration[0] * PPQN)
-            else:
-                duration = int(duration[0] * PPQN / duration[1])
-            data["duration"] = duration
-            data["onset"] = int((data["measure"] * PPQN * 4) + (data["intra-measure"] * PPQN))
-            self.chords.append(Chord(start_tick=data["onset"], chord=data["name"], key=0, previous_chord=0, next_chord=0, rivolto=0))
-
-        self.notes = []
-        for note in notes:
-            # print("note:", note)
-            data = {"measure": note[0], "name": note[16]}
-            intra_measure = [int(a) for a in str(note[5]).split("/")]
-            duration = [int(a) for a in str(note[10]).split("/")]
-            velocity = int(note[15])
-            if len(duration) == 1:
-                duration = int(duration[0] * 4 * PPQN)
-            else:
-                duration = int(duration[0] * PPQN * 4 / duration[1])
-            data["duration"] = duration
-            if len(intra_measure) == 1:
-                data["intra-measure"] = int(intra_measure[0])
-            else:
-                data["intra-measure"] = intra_measure[0] / intra_measure[1]
-            data["onset"] = int((data["measure"] * PPQN * 4) + (data["intra-measure"] * PPQN))
-            current_chord_index = find_nearest_greater_or_equal_index([chord.getStartTick() for chord in self.chords], data["onset"])
-            try:
-                current_chord = self.chords[current_chord_index].getChord()
-            except:
-                current_chord = None
-            if current_chord is None:
-                current_chord = ""
-            self.notes.append(Note(midi_note=noteToMIDI(data["name"]), velocity=velocity, start_tick=data["onset"], duration=data["duration"], chord=current_chord))
 
     def matchToTrack(self, track):
         """Modella accordi e note di questa traccia sulla base di un'altra traccia (ritorna una copia di questa istanza modificata)
@@ -502,6 +387,7 @@ class MIDIClip:
     def computeKey(self):
         """Trova la tonalità del file MIDI
         """
+        # If nothing found inside the file, then set to Cmaj by default
         self.key = 0
         self.mode = "major"
         for msg in self.midi:
@@ -578,7 +464,7 @@ class MIDIClip:
         self.tmp_notes = self.tmp_notes[1:].tolist()
         self.tmp_note_ons = [None] * 12744
         for index, note in enumerate(self.tmp_notes):
-            if note[1] == 1:
+            if (note[1] == 1):
                 self.tmp_note_ons[note[2]] = [note[0], index]
             if note[1] == 0:
                 if self.tmp_note_ons[note[2]] is not None:
@@ -612,106 +498,12 @@ class MIDIClip:
         print("\n\t\t* * * * TRACK '" + self.name + "' * * * *\n")
         print("bpm:", self.bpm)
         print("key:", note2KeySig(self.key), "(n=" + str(self.key) + ")")
-        print("ppqn:", self.ppqn, PPQN)
         print("\t\t* * CHORDS * *")
         for chord in self.chords:
             chord.describe()
         print("\t\t* * NOTES * *")
         for note in self.notes:
             note.describe()
-
-    def tokenize(self, max_notes=200, encode_start_time=False, encode_velocity=False, encode_chord=False, encode_key=False):
-        if len(self.notes) > max_notes:
-            tokens = []
-            for i in range(0, len(self.notes), max_notes // 3):
-                token = ""
-                last_onset = 0
-                for j in range(max_notes):
-                    if (i + j) < len(self.notes):
-                        self.notes[i + j].setStartTick(5 * round(self.notes[i + j].getStartTick() / 5))
-                        if last_onset != self.notes[i + j].getStartTick():
-                            token += (self.notes[i + j].tokenize(encode_start_time=encode_start_time, encode_velocity=encode_velocity, encode_chord=encode_chord, encode_key=encode_key) + ", ")
-                        else:
-                            token = token[:-2] + ";"  # Encode chords as a spaced sequence of tokens (without ",", e.g.: "C3_60 G4_60, E3_120")
-                            token += (self.notes[i + j].tokenize(encode_start_time=encode_start_time, encode_velocity=encode_velocity, encode_chord=encode_chord, encode_key=encode_key) + ", ")
-                        last_onset = self.notes[i + j].getStartTick()
-                tokens.append(token[:-2])
-        else:
-            tokens = ""
-            last_onset = 0
-            for note in self.notes:
-                note.setStartTick(5 * round(note.getStartTick() / 5))
-                if last_onset != note.getStartTick():
-                    tokens += (note.tokenize(encode_start_time=encode_start_time, encode_velocity=encode_velocity, encode_chord=encode_chord, encode_key=encode_key) + ", ")
-                else:
-                    tokens = tokens[:-2] + ";"  # Encode chords as a spaced sequence of tokens (without ",", e.g.: "C3_60 G4_60, E3_120")
-                    tokens += (note.tokenize(encode_start_time=encode_start_time, encode_velocity=encode_velocity, encode_chord=encode_chord, encode_key=encode_key) + ", ")
-                last_onset = note.getStartTick()
-            tokens = tokens[:-2]
-        return tokens
-    
-    def load_from_tokens(self, tokens, reset_chords=True, encode_velocity=False):
-        if isinstance(tokens, str):
-            tokens = tokens.split(", ")
-        self.notes = []
-        if reset_chords:
-            self.chords = []
-            self.key = 0
-        current_tick = 0
-        for token in tokens:
-            if len(token) > 3:
-                if len(token.split(";")) > 1:
-                    min_dur = 1e6
-                    for tt in token.split(";"):
-                        if len(tt) > 3:
-                            tt = tt.split("|")[0]
-                            print("tt", tt)
-                            tt = tt.split("_")
-                            midinote = noteToMIDI(tt[0])
-                            duration = int(tt[1])
-                            if encode_velocity and len(tt) > 2:
-                                velocity = int(tt[2])
-                            else:
-                                velocity = 100
-                            min_dur = min(min_dur, duration)
-                            self.notes.append(Note(midinote, velocity, current_tick, duration))
-                    current_tick += min_dur
-                else:
-                    token = token.split("|")[0]
-                    print("token", token)
-                    token = token.split("_")
-                    midinote = noteToMIDI(token[0])
-                    duration = int(token[1])
-                    if encode_velocity and len(token) > 2:
-                        velocity = int(token[2])
-                    else:
-                        velocity = 100
-                    self.notes.append(Note(midinote, velocity, current_tick, duration))
-                    current_tick += duration
-
-    def save(self, filepath, ignore_first_bar=False):
-        mid = MidiFile(ticks_per_beat=PPQN)
-        track = MidiTrack()
-        track.append(MetaMessage('set_tempo', tempo=mido.bpm2tempo(120)))
-        mid.tracks.append(track)
-        messages = []
-        for note in self.notes:
-            start_tick = note.getStartTick()
-            duration = note.getDuration()
-            messages.append(['note_on', note.getNote(), note.getVelocity(), start_tick])
-            messages.append(['note_off', note.getNote(), note.getVelocity(), start_tick + duration])
-        messages = sorted(messages, key=lambda msg: msg[3])
-        last_time = 0
-        for m in messages:
-            if ignore_first_bar and m[3] < (PPQN * 4):
-                pass
-            else:
-                start_time = m[3]
-                delta_time = start_time - last_time
-                track.append(Message(m[0], note=m[1], velocity=m[2], time=delta_time))
-                last_time = start_time
-        mid.save(filepath)
-        print(f'MIDI file saved as {filepath}')
 
 
 class MIDIClipPlayer:
@@ -806,7 +598,6 @@ class MIDIClipPlayer:
 class TempoClock(threading.Event):
     def __init__(self, main_window=None, bpm=120):
         super().__init__()
-        self.drift_time = 0.0004395
         self.wait_time = 1
         self.main_window = main_window
         self.patch = self.main_window.patch
@@ -819,15 +610,10 @@ class TempoClock(threading.Event):
         self.shuffle_midi_clips = False
         self.tick_counter = 0
         self.thread = None
-        # self.gui_thread = GuiUpdateThread()
-        # self.gui_thread.setPriority(QThread.Priority.HighestPriority)
-        self.gui_timer = QTimer()
-        self.gui_timer.timeout.connect(self.processInputEvents)
-        # self.gui_thread.update_signal.connect(QApplication.processEvents)
         self.event_listeners = {}
         self.time_bounds = {"start": 0, "end": self.counter_reset_value}
         self.loop_bounds = True
-        self.current_region = None
+
         self.calcWaitTime()
 
     def set_bounds(self, start, end):
@@ -886,55 +672,28 @@ class TempoClock(threading.Event):
     def start(self):
         if not self.isPlaying:
             self.has_to_stop = False
-            try:
-                start = self.main_window.region_manager.region_line.regions[self.main_window.region_manager.active_region]["start"]
-                end = self.main_window.region_manager.region_line.regions[self.main_window.region_manager.active_region]["end"]
-                self.set_bounds(start, end)
-            except:
-                pass
-            # if not self.gui_thread.isRunning():
-            #     self.gui_thread.start()
-            # self.gui_timer.start(100)
-
-            self.worker = ClockWorker(clock=self)
-            self.thread = QThread()
-            self.worker.moveToThread(self.thread)
-            self.worker.update_signal.connect(self.main_window.update)
-            self.thread.started.connect(self.clock_event_thread_qt)
+            self.thread = threading.Thread(target=self.clock_event_thread)
             self.thread.start()
-            self.thread.setPriority(QThread.Priority.HighestPriority)  # .HighPriority
-
-    def foo(self):
-        pass
 
     def pause(self):
         if self.thread is not None:
             self.has_to_stop = True
             self.isPlaying = False
-            # self.thread = None
-            self.worker.stop()
-            self.thread.quit()
-            self.thread.wait()
-            self.gui_timer.stop()
-            # self.gui_thread.stop()
-            # self.gui_thread.wait()
+            self.thread = None
 
     def stop(self):
         if self.thread is not None:
             self.has_to_stop = True
             self.isPlaying = False
-            # self.thread = None
-            self.worker.stop()
-            self.thread.quit()
-            self.thread.wait()
-            self.gui_timer.stop()
-            # self.gui_thread.stop()
-            # self.gui_thread.wait()
+            self.thread = None
         self.reset()
 
     def next(self):
         if self.time_bounds["start"] <= self.tick_counter < self.time_bounds["end"]:
             self.tick_counter += 1
+            # if (self.tick_counter % 100) == 0:
+            #     print(self.getCurrentTime())
+            # Compute Curve values at current tick for enabled WidgetCurves
             for audio_widget in self.patch.audio_widgets:
                 uuid = audio_widget.getUUID()
                 wc = self.timeline.widget_curves[str(uuid)]
@@ -990,60 +749,6 @@ class TempoClock(threading.Event):
             if self.has_to_stop:
                 break
 
-    def clock_event_thread_qt(self):
-        t = None
-        residual_time = self.drift_time
-        while True:
-            if t is None:
-                t = time.time()
-            self.set()
-            self.clear()
-            if self.tick_counter % 100 == 0:
-                QCoreApplication.processEvents()
-            # Calculate time delta
-            tdelta = time.time() - t
-            # Adjust residual_time based on observed performance
-            if self.wait_time >= (tdelta + residual_time):
-                time.sleep(self.wait_time - (tdelta + residual_time))
-                residual_time = self.drift_time
-            else:
-                residual_time = tdelta - self.wait_time
-            t = time.time()
-            self.next()
-            if self.has_to_stop:
-                break
-
-    def onTimeout(self):
-        print("Timer timeout - Proceeding with parent function")
-        # Continue with the parent function logic here
-        # For example:
-        print("Parent function completed")
-
-    def processInputEvents(self):
-        # Process all events in the event queue
-        print("Processing GUI Events")
-        QCoreApplication.processEvents()
-
-
-class GuiUpdateThread(QThread):
-    def __init__(self):
-        super().__init__()
-        self._run_flag = True
-
-    def run(self):
-        while self._run_flag:
-            QApplication.processEvents()
-            time.sleep(1)
-
-    def stop(self):
-        self._run_flag = False
-
 
 if __name__ == "__main__":
-    note = Note(69, 127, 0, 120, Chord(0, 4, 0, 0, 0, 0), 0, 440, 120)
-    print("PPQN", PPQN)
-    print("Tokenized note:", note.tokenize(True, True, True))
-    midiclip = MIDIClip("/Users/francescodani/Documents/Libri/Partiture/MIDI Files/Melodies/Ghosthack MIDI - C# - Wubsynth Seasons.mid")
-    midiclip.describe()
-    print(midiclip.tokenize(encode_start_time=True))
-    print(note.noteToFreq(note.getNote()))
+    pass

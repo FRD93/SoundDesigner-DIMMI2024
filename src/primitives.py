@@ -193,6 +193,7 @@ class AddCable(QUndoCommand):
 class ParameterChange(QUndoCommand):
     def __init__(self, widget, key, value):
         super().__init__(f"Changed parameter '{key}' to {value}")
+        print(f"Changed parameter '{key}' to {value}")
         self.widget = widget
         self.key = key
         self.value = value
@@ -221,17 +222,17 @@ class ParameterChange(QUndoCommand):
             try:
                 self.value = float(self.value)
             except:
-                return -1
+                c_print("red", "ParameterChange: Bad. self.value is:" + str(self.value))
         args_copy[self.key]["val"] = self.value
         self.widget.synth_args = deepcopy(args_copy)
         if self.widget.type == "Audio":
             self.widget.resetSynthArgs()
         try:
             self.widget.patch_area.patch.update_subpatch_instances()
-            c_print("green", "update_subpatch_instances successfull")
+            # c_print("green", "update_subpatch_instances successfull")
         except:
+            c_print("red", "ParameterChange: Bad. self.widget.patch_area.patch.update_subpatch_instances()")
             pass
-        return 0
 
 
 class PatchBufferParameterChange(QUndoCommand):

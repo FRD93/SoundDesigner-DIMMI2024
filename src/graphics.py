@@ -46,12 +46,12 @@ try:
     PPQN = conf.getint("GENERAL", "ppqn")
     SCSYNTH_SYNTHDEF_PATH = conf.get("SCSYNTH", "synthdef_path")
     AMBISONICS_KERNEL_PATH = conf.get("SCSYNTH", "ambisonics_kernels_path")
-    _6color_palette_01 = conf.get("APPEARENCE", "6color_palette_01")
-    _6color_palette_02 = conf.get("APPEARENCE", "6color_palette_02")
-    _6color_palette_03 = conf.get("APPEARENCE", "6color_palette_03")
-    _6color_palette_04 = conf.get("APPEARENCE", "6color_palette_04")
-    _6color_palette_05 = conf.get("APPEARENCE", "6color_palette_05")
-    _6color_palette_06 = conf.get("APPEARENCE", "6color_palette_06")
+    _6color_palette_01 = "#242326"
+    _6color_palette_02 = "#242326"
+    _6color_palette_03 = "#323436"
+    _6color_palette_04 = "#323436"
+    _6color_palette_05 = "#464850"
+    _6color_palette_06 = "#464850"
     icon_size = conf.getint("APPEARENCE", "icon_size")
 except:
     c_print("red", "[ERROR]: Config File not found")

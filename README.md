@@ -45,8 +45,13 @@ For Windows, you have to manually install dependencies and directly run the main
 
 # Configuration
 
+## Ambisonic Tool Kit
+
 PLEASE download and install Ambisonic Tool Kit for sc3 along with ATK Kernels separately (https://github.com/ambisonictoolkit/atk-sc3).
 ![Video Demo](tutorials/02%20-%20ATK%20Installation%20Linux.gif)
+
+
+## Setting up config.ini file
 
 In this version, SoundDesigner configuration must be made manually. Please review the ```/src/config.ini``` file to check the correctness of all the paths and the first-time-boot hardware_device_name.
 ![Video Demo](tutorials/03%20-%20SoundDesigner%20Configuration.gif)
@@ -66,3 +71,4 @@ source venv/bin/activate
 cd src
 python graphics.py
 ```
+![Video Demo](tutorials/04%20-%20SoundDesigner%20Usage.gif)

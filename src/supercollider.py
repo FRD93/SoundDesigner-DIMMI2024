@@ -212,7 +212,7 @@ class SCSYNTH:
         try:
             PPQN = conf.getint("GENERAL", "ppqn")
             SCSYNTH_PATH = conf.get("SCSYNTH", "scsynth_path")
-            AMBISONICS_KERNEL_PATH = "/Users/francescodani/Documents/SoundDesigner/ATK/FOA kernels"
+            AMBISONICS_KERNEL_PATH = conf.get("SCSYNTH", "ambisonics_kernels_path")
             NUM_HW_IN = conf.getint("SCSYNTH", "num_hw_in")
             NUM_HW_OUT = conf.getint("SCSYNTH", "num_hw_out")
             NUM_WIRE_BUFFERS = conf.getint("SCSYNTH", "num_wire_buffers")
