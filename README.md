@@ -6,9 +6,9 @@ By Francesco Roberto Dani (https://www.francesco-dani.com). This repository cont
 
 PLEASE download and install Ambisonic Tool Kit for sc3 separately (https://github.com/ambisonictoolkit/atk-sc3).
 
-[![Now in Android: 55]          // Title
-(https://i.ytimg.com/vi/Hc79sDi3f0U/maxresdefault.jpg)] // Thumbnail
-(https://github.com/FRD93/SoundDesigner-DIMMI2024/blob/main/tutorials%2F01%20-%20Installation%20Linux%20-%20cut.mp4 "Installation for Linux)    // Video Link
+[![Now in Android: 55]
+(https://i.ytimg.com/vi/Hc79sDi3f0U/maxresdefault.jpg)]
+(https://github.com/FRD93/SoundDesigner-DIMMI2024/blob/main/tutorials%2F01%20-%20Installation%20Linux%20-%20cut.mp4 "Installation for Linux)
 
 
 ## Linux and macOS
