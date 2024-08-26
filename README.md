@@ -7,8 +7,6 @@ By Francesco Roberto Dani (https://www.francesco-dani.com). This repository cont
 ## Linux and macOS
 
 Follow the instructions below to install SoundDesigner into your system. Currently supported platforms are MacOS and Linux.
-
-Installation for Linux (better resolution video can be found in ```tutorials/01 - Installation Linux - cut.mp4```)
 ![Video Demo](tutorials/01%20-%20Installation%20Linux%20-%20cut.gif)
 
 
