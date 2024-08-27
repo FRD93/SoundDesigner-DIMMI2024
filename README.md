@@ -87,3 +87,6 @@ python graphics.py
 
 ## ParameterCurve load numpy array
 ![Video Demo](tutorials/usage/04%20-%20ParameterCurve%20load%20numpy%20array.gif)
+
+## Recording real-time audio output
+![Video Demo](tutorials/usage/05%20-%20Recording%20real-time%20audio%20output.gif)
