@@ -363,9 +363,10 @@ class CurveXY_BAK(QLabel):
         self.update()
 
     def change_length(self, new_length):
-        self.setGeometry(0, 0, new_length, self.height())
+        self.setGeometry(0, 0, int(new_length), self.height())
         self.maxX = float(new_length)
         scale_factor = self.maxX / self.x_values[-1]
+
         self.x_values = [x_v * scale_factor for x_v in self.x_values]
         self.calcGUICurve()
         self.calcCurveFromGUI()
@@ -660,7 +661,7 @@ class CurveXY(QLabel):
         self.update()
 
     def change_length(self, new_length):
-        self.setGeometry(0, 0, new_length, self.height())
+        self.setGeometry(0, 0, int(new_length), self.height())
         self.maxX = float(new_length)
         scale_factor = self.maxX / self.x_values[-1]
         # print(f"self.x_values before zoom: {self.x_values}")

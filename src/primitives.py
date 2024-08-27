@@ -665,7 +665,7 @@ class SimpleWidget(QLabel):
                 height = self.xlet_size[1]
                 self.inlet_svg["MIDI"].paint(painter, int(x - int(width / 2)), 0, width, height)
                 if QRect(int(x - int(width / 2)), 0, width, height).contains(int(self.mouse_position.x()), int(self.mouse_position.y())):
-                    self.draw_tooltip(painter, "Tooltip diocane", QPoint(int(x + width - int(width / 2)), height))
+                    self.draw_tooltip(painter, "TODO: Add Tooltip", QPoint(int(x + width - int(width / 2)), height))
         # Audio Outlets
         pen.setColor(self.inlet_color)
         painter.setPen(pen)
@@ -686,7 +686,7 @@ class SimpleWidget(QLabel):
                 height = self.xlet_size[1]
                 self.outlet_svg["MIDI"].paint(painter, int(x - int(width / 2)), self.height() - height, width, height)
                 if QRect(int(x - int(width / 2)), self.height() - height, width, height).contains(int(self.mouse_position.x()), int(self.mouse_position.y())):
-                    self.draw_tooltip(painter, "Tooltip diocane", QPoint(int(x + width - int(width / 2)), self.height() - (height + 20)), below=False)
+                    self.draw_tooltip(painter, "TODO: Add Tooltip", QPoint(int(x + width - int(width / 2)), self.height() - (height + 20)), below=False)
         # PARAMETERS
         if type(self.synth_args) == dict:
             if len(self.synth_args.keys()) > 0:
@@ -942,8 +942,11 @@ class AudioWidget(SimpleWidget):
                         self.synth.map(arg, self.synth_args[arg]["bus"])
                         self.synth.set(arg.replace("a_", "selector_"), 1)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Lag al Bus mero
                     else:
-                        self.synth.set(arg, float(self.synth_args[arg]["val"]))
-                        self.synth.set(arg.replace("a_", "selector_"), 0)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Bus al Lag
+                        try:
+                            self.synth.set(arg, float(self.synth_args[arg]["val"]))
+                            self.synth.set(arg.replace("a_", "selector_"), 0)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Bus al Lag
+                        except:
+                            c_print("red", f"ERROR: Widget resetSynthArgs (Bad text: {self.synth_args[arg]['val']})")
                 # Buffer Parameter
                 elif self.synth_args[arg]["type"] == "buffer":
                     list_value = self.synth_args[arg]["val"]
@@ -1581,7 +1584,7 @@ class SimpleCable(QWidget):
                 else:
                     end_point = self.widget_in.getInletPos(self.widget_in_id)
         else:
-            end_point = QPoint(self.drag_x, self.drag_y)
+            end_point = QPointF(self.drag_x, self.drag_y)
         rect = QPolygonF([
             QPointF(start_point.x() - sensibility, start_point.y() - sensibility),
             QPointF(start_point.x() + sensibility, start_point.y() + sensibility),

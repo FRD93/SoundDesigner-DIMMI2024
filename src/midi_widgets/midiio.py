@@ -37,16 +37,20 @@ class MIDIIn(MIDIWidget):
         self.reconnectDevice(self.device)
         c_print("cyan", "MIDI In Thread Started Successfully")
 
+    def getDevice(self):
+        return self.device
+
     def reconnectDevice(self, device):
-        # midi_in_threads = self.patch_area.context.midi_manager.
+        self.midi_manager.unregister_widget(self)
         self.device = device
-        for thread in self.midi_manager.midi_in_threads:
-            thread.removeListener(self)
-            print("LEN", len(self.midi_manager.midi_in_threads) - 1, int(device))
-        max_connected_device = min(len(self.midi_manager.midi_in_threads) - 1, int(device))
-        print(f"max_connected_device (min between {len(self.midi_manager.midi_in_threads) - 1} and {int(device)}): {max_connected_device}")
-        print(f"He is (device {self.device}): {self.midi_manager.midi_in_threads[max_connected_device]}; midi_manager there is: {self.midi_manager}")
-        self.midi_manager.midi_in_threads[max_connected_device].addListener(self)
+        self.midi_manager.register_widget(self)
+        # for thread in self.midi_manager.midi_in_threads:
+        #     thread.removeListener(self)
+        #     print("LEN", len(self.midi_manager.midi_in_threads) - 1, int(device))
+        # max_connected_device = min(len(self.midi_manager.midi_in_threads) - 1, int(device))
+        # print(f"max_connected_device (min between {len(self.midi_manager.midi_in_threads) - 1} and {int(device)}): {max_connected_device}")
+        # print(f"He is (device {self.device}): {self.midi_manager.midi_in_threads[max_connected_device]}; midi_manager there is: {self.midi_manager}")
+        # self.midi_manager.midi_in_threads[max_connected_device].addListener(self)
 
     def __getstate__(self):
         d = super().__getstate__()
