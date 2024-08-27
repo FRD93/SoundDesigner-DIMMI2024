@@ -72,3 +72,18 @@ cd src
 python graphics.py
 ```
 ![Video Demo](tutorials/installation/04%20-%20SoundDesigner%20Usage.gif)
+
+
+# Tutorials
+
+## Open Examples
+![Video Demo](tutorials/usage/01%20-%20Open%20Examples.gif)
+
+## AudioWidgets and TimeLine automations
+![Video Demo](tutorials/usage/02%20-%20AudioWidgets%20and%20TimeLine%20automations.gif)
+
+## ParameterCurve fill with python function
+![Video Demo](tutorials/usage/03%20-%20ParameterCurve%20fill%20with%20python%20function.gif)
+
+## ParameterCurve load numpy array
+![Video Demo](tutorials/usage/04%20-%20ParameterCurve%20load%20numpy%20array.gif)

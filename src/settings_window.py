@@ -206,10 +206,10 @@ class MIDISettings(QWidget):
         self.config.read('config.ini')
         self.lay = QVBoxLayout()
 
-        self.midiins = rtmidi.RtMidiIn()
+        self.midiins = rtmidi.MidiIn()
         self.midiins_lbl = QLabel("MIDI Input Ports")
         self.midiins_lbl.setObjectName("widget-title")
-        self.midiins = [[i, self.midiins.getPortName(i)] for i in range(self.midiins.getPortCount())]
+        self.midiins = [[i, self.midiins.get_port_name(i)] for i in range(self.midiins.get_port_count())]
         self.in_table = QTableWidget()
         self.in_table.setColumnCount(2)
         self.in_table.setHorizontalHeaderLabels(["Port Number", "Port Name"])
@@ -221,10 +221,10 @@ class MIDISettings(QWidget):
                 print(r, c, self.midiins[r][c])
                 self.in_table.setItem(r, c, QTableWidgetItem(str(self.midiins[r][c])))
 
-        self.midiouts = rtmidi.RtMidiIn()
+        self.midiouts = rtmidi.MidiOut()
         self.midiouts_lbl = QLabel("MIDI Output Ports")
         self.midiouts_lbl.setObjectName("widget-title")
-        self.midiouts = [[i, self.midiouts.getPortName(i)] for i in range(self.midiouts.getPortCount())]
+        self.midiouts = [[i, self.midiouts.get_port_name(i)] for i in range(self.midiouts.get_port_count())]
         self.out_table = QTableWidget()
         self.out_table.setColumnCount(2)
         self.out_table.setHorizontalHeaderLabels(["Port Number", "Port Name"])
