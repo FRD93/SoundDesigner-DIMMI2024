@@ -15,6 +15,7 @@ from supercollider import *
 import threading
 import re
 import rtmidi
+from rtmidi.midiutil import open_midiinput
 from log_coloring import c_print
 
 """
@@ -29,11 +30,72 @@ except:
 # PPQN = conf.getint("GENERAL", "ppqn")
 
 
+class MidiInputHandler(object):
+    def __init__(self, port, device, midi_manager):
+        self.port = port
+        self.device = device
+        self.midi_manager = midi_manager
+        self._wallclock = time.time()
+
+    def __call__(self, event, data=None):
+        message, deltatime = event
+        self._wallclock += deltatime
+        # print("[%s] @%0.6f %r" % (self.port, self._wallclock, message))
+        msg_type = message[0]
+        # print("Registered widgets:", self.midi_manager.registered_widgets)
+
+        if msg_type == 144:  # Note On
+            c_print("green", f"NoteOn found: {message}")
+            note_number = message[1]
+            note_name = [key for key, value in MIDI_NOTE_NAMES.items() if value == note_number][0]
+            velocity = message[2]
+            c_print("green", f"NoteOn found: {message}; note {note_number}")
+            c_print("yellow", f"{MIDI_NOTE_NAMES}")
+            # note_name = rtmidi.MidiIn.getNoteName(note_number)
+            # Process Note On
+            for uuid in self.midi_manager.registered_widgets.keys():
+                print("EHIII", int(self.midi_manager.registered_widgets[uuid]["device"]), self.device, int(self.midi_manager.registered_widgets[uuid]["device"]) == self.device)
+                if int(self.midi_manager.registered_widgets[uuid]["device"]) == self.device:
+                    print(f"Propagating RT MIDI Note to {self.midi_manager.registered_widgets[uuid]['widget']}")
+                    self.midi_manager.registered_widgets[uuid]["widget"].propagateRTMIDINote(note_name, velocity)
+                    # self.midi_manager.registered_widgets[uuid]["widget"].propagateRTMIDINote(note_number, velocity)
+        elif msg_type == 128:  # Note Off
+            c_print("green", f"NoteOff found: {message}")
+            note_number = message[1]
+            note_name = [key for key, value in MIDI_NOTE_NAMES.items() if value == note_number][0]
+            # Process Note Off
+            for uuid in self.midi_manager.registered_widgets.keys():
+                if int(self.midi_manager.registered_widgets[uuid]["device"]) == self.device:
+                    self.midi_manager.registered_widgets[uuid]["widget"].propagateRTMIDINote(note_name, 0)
+        elif msg_type == 176:  # Control Change
+            controller_number = message[1]
+            controller_value = message[2]
+            # Process Control Change
+            for uuid in self.midi_manager.registered_widgets.keys():
+                if int(self.midi_manager.registered_widgets[uuid]["device"]) == self.device:
+                    self.midi_manager.registered_widgets[uuid]["widget"].propagateRTCC(controller_number, controller_value)
+        elif msg_type == 192:  # Program Change
+            program_change_number = message[1]
+            # Process Program Change
+            for uuid in self.midi_manager.registered_widgets.keys():
+                if int(self.midi_manager.registered_widgets[uuid]["device"]) == self.device:
+                    self.midi_manager.registered_widgets[uuid]["widget"].propagateRTProgramChange(program_change_number)
+            # Check regions
+            for key in self.midi_manager.region_manager.regions_buttons.keys():
+                try:
+                    if int(self.midi_manager.region_line.regions[key]["program"]) == program_change_number:
+                        self.midi_manager.region_manager.regions_buttons[key].click()
+                        c_print('cyan', f'Switching to region {key}')
+                except:
+                    c_print('red', f'Wrong region name: {key}')
+
+
 class MIDIManager:
     def __init__(self, context):
         self.context = context
         # self.region_manager = self.context.parent.region_manager
         # self.region_line = self.context.parent.timeline.region_line
+        self.registered_widgets = {}
         self.midi_in_device_names = []
         self.midi_out_device_names = []
         self.midi_in_devices = []
@@ -49,7 +111,7 @@ class MIDIManager:
     def set_region_line(self, rl):
         self.region_line = rl
 
-    def connectAll(self):
+    def connectAll_BAK(self):
         self.midi_in_threads = []
         for device in self.midi_in_devices:
             self.midi_ins.append(rtmidi.MidiIn(int(device)))
@@ -65,6 +127,21 @@ class MIDIManager:
             # TODO: Implement MidiOutput class
             # self.midi_in_threads.append(MidiOutput(device, self, self.region_manager, self.region_line))
 
+    def connectAll(self):
+        self.midi_in_threads = []
+        for device in self.midi_in_devices:
+            midiin, port_name = open_midiinput(device)
+            self.midi_ins.append(midiin)
+            self.midi_ins[-1].set_callback(MidiInputHandler(port_name, device, self))
+            # self.midi_ins.append(rtmidi.MidiIn(int(device)))
+            # self.midi_ins[-1].open_port(device)
+            # self.midi_ins[-1].set_callback(self.midi_callback, int(device))
+            c_print("cyan", f"Successfully opened MIDI Input Device: {device}")
+        for device in self.midi_out_devices:
+            self.midi_outs.append(rtmidi.MidiOut(int(device)))
+            self.midi_outs[-1].open_port(device)
+            c_print("cyan", f"Successfully opened MIDI Output Device: {device}")
+
     def disconnectAll(self):
         for midiin_thread in self.midi_in_threads:
             try:
@@ -73,12 +150,12 @@ class MIDIManager:
                 pass
         for device in self.midi_ins:
             try:
-                device.close()
+                device.close_port()
             except:
                 c_print("red", f"ERROR: Could not disconnect device {device} (type={type(device)})")
         for device in self.midi_outs:
             try:
-                device.close()
+                device.close_port()
             except:
                 c_print("red", f"ERROR: Could not disconnect device {device}")
 
@@ -89,6 +166,57 @@ class MIDIManager:
         self.midi_out_device_names = [rtmidi.MidiOut().get_port_name(index) for index in range(rtmidi.MidiOut().get_port_count())]
         self.midi_out_devices = [index for index in range(rtmidi.MidiOut().get_port_count())]
         self.connectAll()
+
+    def register_widget(self, widget):
+        self.registered_widgets[str(widget.getUUID())] = {"widget": widget, "device": widget.getDevice()}
+        c_print("cyan", f"Registered widget {widget.getUUID()} to device {widget.getDevice()}")
+
+    def unregister_widget(self, widget):
+        if str(widget.getUUID()) in self.registered_widgets.keys():
+            del self.registered_widgets[str(widget.getUUID())]
+
+    def midi_callback(self, message, time_stamp, device):
+        # `message` is a list of MIDI data bytes
+        # `time_stamp` is the delta time
+        c_print("green", f"MIDI message received from device {device}: {message}")
+        msg_type = message[0] & 0xF0  # Extract the message type
+
+        if msg_type == 0x90:  # Note On
+            note_number = message[1]
+            velocity = message[2]
+            note_name = rtmidi.MidiIn.getNoteName(note_number)
+            # Process Note On
+            for uuid in self.registered_widgets.keys():
+                if self.registered_widgets[uuid]["device"] == device:
+                    self.registered_widgets[uuid]["widget"].propagateRTMIDINote(note_name, velocity)
+        elif msg_type == 0x80:  # Note Off
+            note_number = message[1]
+            note_name = rtmidi.MidiIn.getNoteName(note_number)
+            # Process Note Off
+            for uuid in self.registered_widgets.keys():
+                if self.registered_widgets[uuid]["device"] == device:
+                    self.registered_widgets[uuid]["widget"].propagateRTMIDINote(note_name, 0)
+        elif msg_type == 0xB0:  # Control Change
+            controller_number = message[1]
+            controller_value = message[2]
+            # Process Control Change
+            for uuid in self.registered_widgets.keys():
+                if self.registered_widgets[uuid]["device"] == device:
+                    self.registered_widgets[uuid]["widget"].propagateRTCC(controller_number, controller_value)
+        elif msg_type == 0xC0:  # Program Change
+            program_change_number = message[1]
+            # Process Program Change
+            for uuid in self.registered_widgets.keys():
+                if self.registered_widgets[uuid]["device"] == device:
+                    self.registered_widgets[uuid]["widget"].propagateRTProgramChange(program_change_number)
+            # Check regions
+            for key in self.region_manager.regions_buttons.keys():
+                try:
+                    if int(self.region_line.regions[key]["program"]) == program_change_number:
+                        self.region_manager.regions_buttons[key].click()
+                        c_print('cyan', f'Switching to region {key}')
+                except:
+                    c_print('red', f'Wrong region name: {key}')
 
     def getMIDIIns(self):
         return self.midi_ins

@@ -79,7 +79,7 @@ python graphics.py
 ## Open Examples
 ![Video Demo](tutorials/usage/01%20-%20Open%20Examples.gif)
 
-## AudioWidgets and TimeLine automations
+## AudioWidgets insertion and TimeLine automation
 ![Video Demo](tutorials/usage/02%20-%20AudioWidgets%20and%20TimeLine%20automations.gif)
 
 ## ParameterCurve fill with python function
