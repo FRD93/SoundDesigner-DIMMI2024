@@ -210,6 +210,7 @@ class SCSYNTH:
         conf = cp.ConfigParser()
         conf.read(CONFIG_PATH)  # "config.ini"
         try:
+
             PPQN = conf.getint("GENERAL", "ppqn")
             SCSYNTH_PATH = conf.get("SCSYNTH", "scsynth_path")
             AMBISONICS_KERNEL_PATH = conf.get("SCSYNTH", "ambisonics_kernels_path")
@@ -245,6 +246,7 @@ class SCSYNTH:
             RECORDING_NUM_CHANNELS = 2
             RECORDING_HEADER_FORMAT = "WAV"
             RECORDING_SAMPLE_FORMAT = "int32"
+        c_print("green", f"HARDWARE_DEVICE_NAME: {HARDWARE_DEVICE_NAME}")
         self.mem_size = RT_MEM_SIZE
         self.sample_rate = SAMPLE_RATE
         self.block_size = BLOCK_SIZE
@@ -746,6 +748,10 @@ class Bus:
                 self.chans.append(first_free_chan + i)
         # self.chans = [self.server.queryFreeAudioBus() for _ in range(self.n_chans)]
         self.server.addAudioBus(self)
+
+    def overwriteChans(self, chans):
+        for ch_id, chan in enumerate(chans):
+            self.chans[ch_id] = chan
 
     def getNumChans(self):
         return self.n_chans

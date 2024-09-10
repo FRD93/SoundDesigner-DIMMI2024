@@ -313,5 +313,44 @@
 				"bus": -1
 			}
 		}
-	}
+	},
+    "Granular Phaser": {
+        "synth_name": "GrainPhaser",
+        "n_in": 1,
+        "n_out": 1,
+        "args": {
+            "a_delaytime": {
+                "desc": "Delay Time (sec)",
+                "type": "audio",
+                "min": 0.0001,
+                "max": 1.99,
+                "val": 0.25,
+                "bus": -1
+            },
+            "a_depth": {
+                "desc": "Depth (abs)",
+                "type": "audio",
+                "min": 0.01,
+                "max": 1.0,
+                "val": 0.9,
+                "bus": -1
+            },
+            "a_rate": {
+                "desc": "Rate (abs)",
+                "type": "audio",
+                "min": 0.01,
+                "max": 4.0,
+                "val": 1.0,
+                "bus": -1
+            },
+            "a_gain": {
+                "desc": "Amplitude (abs)",
+                "type": "audio",
+                "min": 0.0,
+                "max": 1.2,
+                "val": 0.75,
+                "bus": -1
+            }
+        }
+    }
 }

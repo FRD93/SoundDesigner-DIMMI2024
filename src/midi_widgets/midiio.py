@@ -35,7 +35,7 @@ class MIDIIn(MIDIWidget):
         self.setLayout(self.lay)
 
         self.reconnectDevice(self.device)
-        c_print("cyan", "MIDI In Thread Started Successfully")
+        # c_print("cyan", "MIDI In Thread Started Successfully")
 
     def getDevice(self):
         return self.device
@@ -57,13 +57,12 @@ class MIDIIn(MIDIWidget):
         d.update({
             "device": self.device
         })
-        print(f"EHI I'm saving the device as {self.device}")
+        # print(f"EHI I'm saving the device as {self.device}")
         return d
 
     def __setstate__(self, state):
-        print(f"EHI setting device to {state['device']}")
+        # print(f"EHI setting device to {state['device']}")
         super().__setstate__(state)
-
         self.device = state["device"]
         self.set_device.setText(str(self.device))
         self.reconnectDevice(self.device)

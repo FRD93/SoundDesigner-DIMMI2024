@@ -2,7 +2,7 @@
     "MyFirstSynth": {
         "synth_name": "FM1",
         "n_audio_in": 0,
-        "n_audio_out": 1,
+        "n_audio_out": 2,
         "n_midi_in": 1,
         "n_midi_out": 0,
         "args": {

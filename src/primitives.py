@@ -883,7 +883,7 @@ class AudioWidget(SimpleWidget):
         return a
 
     def setSettings(self, settings):
-        c_print("green", f"AudioWidget {self.name}-{self.getUUID()} recreation settings: {settings}")
+        # c_print("green", f"AudioWidget {self.name}-{self.getUUID()} recreation settings: {settings}")
         self.synth_args = deepcopy(settings["Parameters"])
         # Inputs
         for index, key in enumerate(settings["Inputs"]):
@@ -1040,7 +1040,7 @@ class AudioWidget(SimpleWidget):
         for i in range(self.n_out):
             self.args.append("out_ch_{}".format(i))
             d["out_ch_{}".format(i)] = self.bus.getChan(i)
-        print("AudioWidget Saving state:", d)
+        c_print("green", f"AudioWidget Saving state: {d}")
         return d
 
     def __setstate__(self, state):
@@ -1059,7 +1059,7 @@ class AudioWidget(SimpleWidget):
         # TODO: check this line!
         self.resetSynthArgs()
         self.instantiateSynth()  # Qui instantiateSynth perchè non devo ricreare il Bus
-        c_print("red", f"AudioWidget {self.name} ins: {self.input_channels}; outs: {self.output_channels}; bus: {self.bus.getChans()}")
+        c_print("green", f"AudioWidget Loading state: {state}")
 
 
 class MIDIWidget(SimpleWidget):
@@ -1258,6 +1258,7 @@ class AudioMIDIWidget(SimpleWidget):
         params.append(frequency)
         params.append("amp")
         params.append(amplitude)
+        print(f"params: {params}")
         if velocity > 0:  # Note On
             try:
                 self.note_synths[str(note.getNote())].set("gate", 0)  # release synth if any
@@ -1318,7 +1319,7 @@ class AudioMIDIWidget(SimpleWidget):
         for i in range(self.n_in):
             inputs["in_ch_{}".format(i)] = self.input_channels[i]
         for i in range(self.n_out):
-            outputs["out_ch_{}".format(i)] = self.bus.getChan(i)
+            outputs["out_ch_{}".format(i)] = self.output_channels[i]
         a = {
             "Parameters": self.synth_args,
             "Inputs": inputs,
@@ -1362,7 +1363,7 @@ class AudioMIDIWidget(SimpleWidget):
         for i in range(self.n_out):
             self.args.append("out_ch_{}".format(i))
             d["out_ch_{}".format(i)] = self.bus.getChan(i)
-        print("AudioMIDIWidget Saving state:", d)
+        c_print("green", f"AudioMIDIWidget Saving state: {d}")
         return d
 
     def __setstate__(self, state):
@@ -1374,8 +1375,10 @@ class AudioMIDIWidget(SimpleWidget):
         # self.in_ch = state["in_ch"]
         self.setSettings(state["Settings"])
         self.setGeometry(state["x"], state["y"], state["width"], state["height"])
+        self.bus = Bus(self.server, self.n_out, [state["out_ch_{}".format(i)] for i in range(self.n_out)])
         self.resetNoteSynths()
-        print("output channels:", self.output_channels, "bus first channel:", [self.bus.getChan(i) for i in range(len(self.output_channels))])
+        # print("output channels:", self.output_channels, "bus first channel:", [self.bus.getChan(i) for i in range(len(self.output_channels))])
+        c_print("green", f"AudioMIDIWidget Loading state: {state}")
 
 
 class SubPatchInstanceWidget(SimpleWidget):

@@ -1,5 +1,5 @@
 (
-SynthDef(\FM1, { | out_ch_0, out_ch_1, freq=440, a_imod=1, a_gain=1.0, a_pan=0, gate=1 |
+SynthDef(\FM1, { | out_ch_0=4096, out_ch_1=4096, freq=440, a_imod=1, a_gain=1.0, a_pan=0, gate=1 |
 	var sig, env;
 	// a_gain.poll;
 	env = EnvGen.ar(Env.adsr(), gate: gate, levelScale: a_gain, doneAction: 2);

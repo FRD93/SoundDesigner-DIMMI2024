@@ -46,12 +46,12 @@ try:
     PPQN = conf.getint("GENERAL", "ppqn")
     SCSYNTH_SYNTHDEF_PATH = conf.get("SCSYNTH", "synthdef_path")
     AMBISONICS_KERNEL_PATH = conf.get("SCSYNTH", "ambisonics_kernels_path")
-    _6color_palette_01 = "#242326"
-    _6color_palette_02 = "#242326"
-    _6color_palette_03 = "#323436"
-    _6color_palette_04 = "#323436"
-    _6color_palette_05 = "#464850"
-    _6color_palette_06 = "#464850"
+    _6color_palette_01 = conf.get("APPEARENCE", "6color_palette_01")
+    _6color_palette_02 = conf.get("APPEARENCE", "6color_palette_02")
+    _6color_palette_03 = conf.get("APPEARENCE", "6color_palette_03")
+    _6color_palette_04 = conf.get("APPEARENCE", "6color_palette_04")
+    _6color_palette_05 = conf.get("APPEARENCE", "6color_palette_05")
+    _6color_palette_06 = conf.get("APPEARENCE", "6color_palette_06")
     icon_size = conf.getint("APPEARENCE", "icon_size")
 except:
     c_print("red", "[ERROR]: Config File not found")
@@ -130,42 +130,43 @@ class PatchArea(QLabel):
         return self.patch.get_undo_stack()
 
     def repatch_audio(self):
-        print("\nBeginning audio repatch:")
+        # print("\nBeginning audio repatch:")
         widget_ins = defaultdict(list)
         node_order = []
         sources = []
         # Conta quanti inlet (connessi) ha ciascun widget
-        for widget in self.patch.audio_widgets:
+        for widget in self.patch.audio_widgets + self.patch.audio_midi_widgets + self.patch.subpatch_widgets:
             widget_ins[widget.getUUID()] = []
             for cable in self.audio_cables:
                 if cable.widget_in:
                     if widget.getUUID() == cable.widget_in.getUUID():
                         widget_ins[widget.getUUID()].append(cable.widget_out.getUUID())
         is_first_widget = True
+        first_widget = None
         # Metti in Head i widget con zero inlet (connessi)
-        for widget in self.patch.audio_widgets + self.patch.subpatch_widgets:
+        for widget in self.patch.audio_widgets + self.patch.audio_midi_widgets + self.patch.subpatch_widgets:
             if len(widget_ins[widget.getUUID()]) == 0:
-                if is_first_widget == True:
-                    print("Moving to Head:", widget.getUUID(), widget.synth_name)
+                if is_first_widget and first_widget is None:
+                    # print("Moving to Head:", widget.getUUID(), widget.synth_name)
                     if hasattr(widget, "group"):
                         widget.group.moveToHead()
                     elif hasattr(widget, "synth"):
                         widget.synth.moveToHead()
                 else:
-                    print("Moving", widget.getUUID(), widget.synth_name, "AFTER", is_first_widget.getUUID(), is_first_widget.synth_name)
-                    print(f"widget: {widget} ; is_first_widget: {is_first_widget}")
-                    if hasattr(is_first_widget, "group"):
-                        widget.moveAfter(is_first_widget.group)
+                    # print("Moving", widget.getUUID(), widget.synth_name, "AFTER", first_widget.getUUID(), first_widget.synth_name)
+                    # print(f"widget: {widget} ; is_first_widget: {is_first_widget}")
+                    if hasattr(first_widget, "group"):
+                        widget.moveAfter(first_widget.group)
                     elif hasattr(widget, "synth"):
-                        widget.moveAfter(is_first_widget.synth)
-                is_first_widget = widget
+                        widget.moveAfter(first_widget.synth)
+                first_widget = widget
                 sources.append(widget.getUUID())
                 del widget_ins[widget.getUUID()]
         # Metti in After i widget con 1 inlet i cui nodi Before siano stati rimossi dalla lista
         # TODO: mettere loop infinito al posto di range(3)!!!
         for _ in range(3):
             # TODO: concatenare self.patch.audio_widgets con self.patch.subpatch_widgets
-            for widget in self.patch.audio_widgets + self.patch.subpatch_widgets:
+            for widget in self.patch.audio_widgets+ self.patch.audio_midi_widgets + self.patch.subpatch_widgets:
                 if widget.getUUID() in widget_ins.keys():
                     if len(widget_ins[widget.getUUID()]) == 1:
                         for cable in self.audio_cables:
@@ -177,10 +178,10 @@ class PatchArea(QLabel):
                                         elif hasattr(cable.widget_out, "synth"):
                                             widget.moveAfter(cable.widget_out.synth)
                                         node_order.append(widget.getUUID())
-                                        print("Moving", widget.getUUID(), widget.synth_name, "AFTER", cable.widget_out.getUUID(), cable.widget_out.synth_name)
+                                        # print("Moving", widget.getUUID(), widget.synth_name, "AFTER", cable.widget_out.getUUID(), cable.widget_out.synth_name)
                                         del widget_ins[widget.getUUID()]
             # Se trovi un widget con >1 inlet i cui nodi Before siano stati TUTTI rimossi dalla lista, prendi l'ultimo e mettilo After a quello
-            for widget in self.patch.audio_widgets + self.patch.subpatch_widgets:
+            for widget in self.patch.audio_widgets + self.patch.audio_midi_widgets + self.patch.subpatch_widgets:
                 if widget.getUUID() in widget_ins.keys():
                     if len(widget_ins[widget.getUUID()]) > 1:
                         # print(f"Found {widget.getUUID()}, {widget.synth_name} with length: >1")
@@ -208,7 +209,7 @@ class PatchArea(QLabel):
                                             elif hasattr(cable.widget_out, "synth"):
                                                 widget.moveAfter(cable.widget_out.synth)
                                             node_order.append(widget.getUUID())
-                                            print("Moving", widget.getUUID(), widget.synth_name, "AFTER", cable.widget_out.getUUID(), cable.widget_out.synth_name)
+                                            # print("Moving", widget.getUUID(), widget.synth_name, "AFTER", cable.widget_out.getUUID(), cable.widget_out.synth_name)
                                             del widget_ins[widget.getUUID()]
                                             has_to_break = True
                                             break
@@ -216,7 +217,7 @@ class PatchArea(QLabel):
                                             break
         for wid in self.patch.subpatch_widgets:
             wid.repatch_audio()
-        print("Ended audio repatch!\n")
+        # print("Ended audio repatch!\n")
         self.patch.audiostatus.populate()
 
     def redraw_cables(self):
@@ -487,7 +488,9 @@ class WidgetSearchDialog(QDialog):
         self.setLayout(layout)
 
         # Populate the grid initially
+        t = time.time()
         self.filter_widgets()
+        c_print("yellow", f"WidgetSearchDialog filter_widgets executed in {time.time() - t} seconds.")
 
     def create_icon(self, widget_name, category):
         # Cerca l'icona PNG nelle sottocartelle delle directory audio, audio_midi e midi
@@ -741,6 +744,7 @@ class Patch(QWidget):
         self.parent.timeline.populate_widgets()
 
     def add_audio_widget(self):
+        t = time.time()
         class_name = self.sender().text()
         class_kind = ""
         for kind in self.widgets["audio"].keys():
@@ -752,6 +756,7 @@ class Patch(QWidget):
         instance.show()
         self.audio_widgets.append(instance)
         self.parent.timeline.populate_widgets()
+        c_print("yellow", f"add_audio_widget executed in {time.time() - t} seconds")
 
     def remove_audio_widget(self, widget):
         for _ in range(widget.n_in + widget.n_out):
@@ -1299,7 +1304,9 @@ class MainWindow(QMainWindow):
         self.patch_stack_layout.setCurrentIndex(index)
 
     def addWidget(self):
+        t = time.time()
         dialog = WidgetSearchDialog(self.patch.audio_widgets_names, self.patch.midi_widgets_names, self.patch.audio_midi_widgets_names, self)
+        c_print("yellow", f"WidgetSearchDialog initialized in {time.time() - t} seconds.")
         dialog.exec()
 
     def get_undo_stack(self):

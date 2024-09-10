@@ -93,7 +93,7 @@ SynthDef(\PingPongDelay, { | in_ch_0=0, in_ch_1=1, out_ch_0=0, out_ch_1=1, selec
 	Out.kr(out_ch_1, RMS.kr(sig[1]));
 }).writeDefFile;
 
-SynthDef(\Chorus, { | in_ch_0 = 0, out_ch_0 = 0, selector_delaytime=0, a_delaytime = 0.03, selector_depth=0, a_depth = 0.01, selector_rate = 0, a_rate = 0.25, selector_numvoices=0, selector_gain=0, a_gain=0.75 |
+SynthDef(\Chorus, { | in_ch_0 = 0, out_ch_0 = 0, selector_delaytime=0, a_delaytime = 0.03, selector_depth=0, a_depth = 0.01, selector_rate = 0, a_rate = 0.25, selector_gain=0, a_gain=0.75 |
     var input, chorus, delays, modulatedDelays, n_delays=32;
 	a_delaytime = Select.ar(selector_delaytime, [Lag.ar(K2A.ar(a_delaytime), 0.001), a_delaytime]);
 	a_depth= Select.ar(selector_depth, [Lag.ar(K2A.ar(a_depth), 0.001), a_depth]).clip(0.0, 1.0);
@@ -115,7 +115,7 @@ SynthDef(\Chorus, { | in_ch_0 = 0, out_ch_0 = 0, selector_delaytime=0, a_delayti
 	Out.kr(out_ch_0, RMS.kr(chorus));
 }).writeDefFile;
 
-SynthDef(\Chorus2CH, { | in_ch_0=0, in_ch_1=1, out_ch_0=0, out_ch_1=1, selector_delaytime=0, a_delaytime = 0.03, selector_depth=0, a_depth = 0.01, selector_rate = 0, a_rate = 0.25, selector_numvoices=0, selector_gain=0, a_gain=0.75 |
+SynthDef(\Chorus2CH, { | in_ch_0=0, in_ch_1=1, out_ch_0=0, out_ch_1=1, selector_delaytime=0, a_delaytime = 0.03, selector_depth=0, a_depth = 0.01, selector_rate = 0, a_rate = 0.25, selector_gain=0, a_gain=0.75 |
     var input, chorus, delays, modulatedDelays, n_delays=32;
 	a_delaytime = Select.ar(selector_delaytime, [Lag.ar(K2A.ar(a_delaytime), 0.001), a_delaytime]);
 	a_depth= Select.ar(selector_depth, [Lag.ar(K2A.ar(a_depth), 0.001), a_depth]).clip(0.0, 1.0);
@@ -137,6 +137,26 @@ SynthDef(\Chorus2CH, { | in_ch_0=0, in_ch_1=1, out_ch_0=0, out_ch_1=1, selector_
 	Out.kr(out_ch_0, RMS.kr(chorus[0]));
 	Out.ar(out_ch_1, chorus[1]);
 	Out.kr(out_ch_1, RMS.kr(chorus[1]));
+}).writeDefFile;
+
+SynthDef(\GrainPhaser, { | in_ch_0 = 0, out_ch_0 = 0, selector_delaytime=0, a_delaytime = 0.03, selector_depth=0, a_depth = 0.01, selector_rate = 0, a_rate = 0.25, selector_gain=0, a_gain=0.75 |
+    var input, chorus, trigger, granulator, localbuf;
+	a_delaytime = Select.ar(selector_delaytime, [Lag.ar(K2A.ar(a_delaytime), 0.001), a_delaytime]);
+	a_depth= Select.ar(selector_depth, [Lag.ar(K2A.ar(a_depth), 0.001), a_depth]).clip(0.0, 1.0);
+	a_rate = Select.ar(selector_rate, [Lag.ar(K2A.ar(a_rate), 0.001), a_rate]);
+	a_gain = Select.ar(selector_gain, [Lag.ar(K2A.ar(a_gain), 0.001), a_gain]);
+    // Read the mono input & create the trigge
+    input = In.ar(in_ch_0, 1);
+	localbuf = LocalBuf(8192);
+	BufWr.ar([input], localbuf, Phasor.ar(0, BufRateScale.kr(localbuf), 0, BufFrames.kr(localbuf)));
+	trigger = Impulse.ar((100 + WhiteNoise.ar(30)) * a_rate);
+    // Create the granulator and mix with input
+	granulator = TGrains.ar(1, trigger, localbuf, 1, TExpRand.ar(0.0000001, a_delaytime, trigger), 0.1);
+	granulator = (input + (granulator * a_depth)) / (1 + a_depth);
+	// granulator = input;
+    // Output the processed signal
+    Out.ar(out_ch_0, granulator);
+	Out.kr(out_ch_0, RMS.kr(granulator));
 }).writeDefFile;
 )
 
