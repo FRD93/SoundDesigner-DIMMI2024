@@ -314,25 +314,25 @@
 			}
 		}
 	},
-    "Granular Phaser": {
-        "synth_name": "GrainPhaser",
+    "Granular Pitch Shifter": {
+        "synth_name": "PitchShift",
         "n_in": 1,
         "n_out": 1,
         "args": {
-            "a_delaytime": {
-                "desc": "Delay Time (sec)",
+            "a_time_dispersion": {
+                "desc": "Time Dispersion (sec)",
                 "type": "audio",
-                "min": 0.0001,
-                "max": 1.99,
-                "val": 0.25,
+                "min": 0.0,
+                "max": 0.5,
+                "val": 0.0,
                 "bus": -1
             },
-            "a_depth": {
-                "desc": "Depth (abs)",
+            "a_pitch_dispersion": {
+                "desc": "Pitch Dispersion (abs)",
                 "type": "audio",
-                "min": 0.01,
+                "min": 0.0,
                 "max": 1.0,
-                "val": 0.9,
+                "val": 0.0,
                 "bus": -1
             },
             "a_rate": {

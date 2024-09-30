@@ -1885,3 +1885,13 @@ class PatchBuffers(QWidget):
         self.removeAllBuffers()
         for buf in state["buffers"]:
             self.addBuffer(int(state["buffers"][buf]["bufnum"]), state["buffers"][buf]["name"], float(state["buffers"][buf]["duration"]), int(state["buffers"][buf]["channels"]))
+
+class QFloatEdit(QLineEdit):
+    def __init__(self, *__args):
+        super().__init__(*__args)
+
+    def text(self):
+        return self.text()
+
+    def floatText(self):
+        return float(self.text().replace(",", "."))

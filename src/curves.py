@@ -305,295 +305,11 @@ class Curve(QWidget):
         pass
 
 
-class CurveXY_BAK(QLabel):
-    def __init__(self, parent=None, npoints=3, minY=0.0, maxY=1.0, initial_valuesY=0.0, unitY="", minX=0, maxX=1000, unitX="", interp="Quad"):
-        super().__init__(parent)
-        self.parent = parent
-        self.setObjectName("curvexy")
-        self.setAutoFillBackground(True)
-        self.setMouseTracking(True)
-        # self.setMinimumSize(100, 20)
-        self.setContentsMargins(0, 0, 0, 0)
-        self.catch_point = 10
-        self.point_radius = 5
-        self.cursor_pos = 0
-        self.zoom = 1.0
-        self.track = None
-        self.snap_to_grid = False
-        self.minY = minY
-        self.maxY = maxY
-        self.npoints = max(3, npoints)
-        self.unitY = unitY
-        self.minX = minX
-        self.maxX = maxX
-        self.setFixedWidth(int(self.maxX))
-        self.unitX = unitX
-        self.x_gui = [int(i * self.width() / (self.npoints - 1)) for i in range(self.npoints)]
-        self.x_values = [functions.mmap(val, [0, self.width()], [self.minX, self.maxX]) for val in self.x_gui]
-        self.interp = interp
-        self.curve = [initial_valuesY] * self.npoints
-        self.gui_curve = self.curve.copy()
-        self.calcGUICurve()
-
-    def set_snap_to_grid(self, snap):
-        self.snap_to_grid = snap
-
-    def set_cursor(self, cursor_pos):
-        self.cursor_pos = int(cursor_pos)
-        self.update()
-
-    def send_set_cursor(self):
-        self.parent.region_line.update_cursor_pos(self.cursor_pos)
-
-    def move_points(self, from_, to_, move):
-        l = []
-        before = []
-        after = []
-        for i in range(len(self.x_values)):
-            if 0 < i < (len(self.x_values) - 1):
-                if from_ <= self.x_values[i] <= to_:
-                    l.append(i)
-                    before.append(self.x_values[i])
-                    self.x_values[i] += move
-                    after.append(self.x_values[i])
-        # print(f"moving values {l} of {move} -> before: {before} - after: {after}")
-        self.x_values.sort()
-        self.calcGUICurve()
-        self.recalc_y_GUI()
-        self.update()
-
-    def change_length(self, new_length):
-        self.setGeometry(0, 0, int(new_length), self.height())
-        self.maxX = float(new_length)
-        scale_factor = self.maxX / self.x_values[-1]
-
-        self.x_values = [x_v * scale_factor for x_v in self.x_values]
-        self.calcGUICurve()
-        self.calcCurveFromGUI()
-        self.update()
-
-    def zoom_in(self):
-        self.zoom *= 2.0
-        self.setFixedWidth(int(self.width() * 2))
-        self.change_length(self.maxX)
-        print(self.zoom)
-
-    def zoom_out(self):
-        self.zoom /= 2.0
-        self.setFixedWidth(int(self.width() / 2))
-        self.change_length(self.maxX)
-        print(self.zoom)
-
-    def getXValues(self):
-        return self.x_values
-
-    def getYValues(self):
-        return self.curve
-
-    def get_undo_stack(self):
-        return self.parent.get_undo_stack()
-
-    def insertPoint(self, x, y):
-        command = AddCurvePoint(self, x, y)
-        self.get_undo_stack().push(command)
-
-    def deletePoint(self, index):
-        command = DeleteCurvePoint(self, index)
-        self.get_undo_stack().push(command)
-
-    def mousePressEvent(self, event):
-        self.track = None
-        modifiers = QApplication.keyboardModifiers()
-        if event.button() == Qt.MouseButton.LeftButton:
-            if modifiers == Qt.KeyboardModifier.ShiftModifier:
-                self.insertPoint(event.position().x(), event.position().y())
-            for index, point in enumerate(self.gui_curve):
-                if np.sqrt((event.position().x() - point.x())**2 + (event.position().y() - point.y())**2) <= self.catch_point:
-                    if modifiers == Qt.KeyboardModifier.ControlModifier:
-                        settings = EnvelopePointSettings(parent=None, curve=self, point_val=self.curve[index], point_pos=self.x_values[index])
-                        if settings.exec():
-                            val, pos = settings.getInputs()
-                            self.x_values[index] = pos
-                            self.curve[index] = val
-                            self.calcGUICurve()
-                            self.update()
-                    else:
-                        self.track = index
-        if event.button() == Qt.MouseButton.RightButton:
-            for index, point in enumerate(self.gui_curve):
-                if np.sqrt((event.position().x() - point.x())**2 + (event.position().y() - point.y())**2) <= self.catch_point:
-                    self.deletePoint(index)
-        self.update()
-
-    def mouseMoveEvent(self, event):
-        self.cursor_pos = int(event.position().x())
-        self.send_set_cursor()
-        if self.track is not None:
-            # self.x_gui[self.track] = np.clip(event.position().x(), 0, self.width())
-            if 0 < self.track < len(self.gui_curve) - 1:
-                new_x = event.position().x()
-                if self.snap_to_grid:
-                    new_x = int((new_x + (GRID_SIZE / 2)) / GRID_SIZE) * GRID_SIZE
-                self.gui_curve[self.track].setX(np.clip(new_x, 0, self.width()))
-            self.gui_curve[self.track].setY(np.clip(event.position().y(), 0, self.height()))
-            # print(self.x_gui[self.track], self.width())
-            self.calcCurveFromGUI()
-        self.update()
-
-    def mouseReleaseEvent(self, event):
-        if self.track is not None:
-            self.track = None
-            self.calcCurveFromGUI()
-            self.update()
-
-    def setMin(self, min_):
-        for index, point in enumerate(self.curve):
-            self.curve[index] = functions.mmap(point, [self.minY, self.maxY], [min_, self.maxY])
-        self.minY = min_
-        self.calcCurveFromGUI()
-
-    def setMax(self, max_):
-        for index, point in enumerate(self.curve):
-            self.curve[index] = functions.mmap(point, [self.minY, self.maxY], [self.minY, max_])
-        self.maxY = max_
-        self.calcCurveFromGUI()
-
-    def setInterp(self, interp):
-        if interp not in ["Step", "Linear", "Quad", "Cubic", "Trig"]:
-            raise ValueError()
-        self.interp = interp
-
-    def recalc_y_GUI(self):
-        for index, point in enumerate(self.gui_curve):
-            self.curve[index] = functions.mmap(point.y(), [0, self.height()], [self.maxY, self.minY])
-
-    def calcCurveFromGUI(self):
-        for index, point in enumerate(self.gui_curve):
-            self.curve[index] = functions.mmap(point.y(), [0, self.height()], [self.maxY, self.minY])
-            self.x_values[index] = functions.mmap(point.x(), [0, self.width()], [self.minX, self.maxX])
-
-    def calcGUICurve(self):
-        self.gui_curve = [QPointF(int(functions.mmap(self.x_values[index], [float(self.minX), float(self.maxX)], [0, float(self.width())])), int(functions.mmap(float(point), [self.minY, self.maxY], [self.height(), 0]))) for index, point in enumerate(self.curve)]
-        self.gui_curve = sorted(self.gui_curve, key=lambda x: x.x())
-
-    def resizeEvent(self, event):
-        self.calcGUICurve()
-
-    def buildPath(self):
-        factor = 0.25
-        path = QPainterPath(self.gui_curve[0])
-        # path = QPainterPath(QPointF(0.0, 0.0))
-        for p, current in enumerate(self.gui_curve[1:-1], 1):  # [:-1], 0
-            # previous segment
-            source = QLineF(self.gui_curve[p - 1], current)
-            # next segment
-            target = QLineF(current, self.gui_curve[p + 1])
-            targetAngle = target.angleTo(source)
-            if targetAngle > 180:
-                angle = (source.angle() + source.angleTo(target) / 2) % 360
-            else:
-                angle = (target.angle() + target.angleTo(source) / 2) % 360
-            revTarget = QLineF.fromPolar(source.length() * factor, angle + 180).translated(current)
-            cp2 = revTarget.p2()
-            if p == 1:
-                path.quadTo(cp2, current)
-            else:
-                # use the control point "cp1" set in the *previous* cycle
-                path.cubicTo(cp1, cp2, current)
-            revSource = QLineF.fromPolar(target.length() * factor, angle).translated(current)
-            cp1 = revSource.p2()
-        # the final curve, that joins to the last point
-        path.quadTo(cp1, self.gui_curve[-1])
-        return path
-
-    def paintEvent(self, event):
-        self.calcGUICurve()
-        painter = QPainter(self)
-        painter.setPen(Qt.GlobalColor.gray)
-        painter.setBrush(Qt.GlobalColor.gray)
-        # draw path
-        last_point = None
-        if self.interp != "Quad":
-            path = QPainterPath()
-            for index, point in enumerate(self.gui_curve):
-                painter.setBrush(Qt.BrushStyle.NoBrush)
-                if last_point is not None:
-                    path.moveTo(last_point)
-                    if self.interp == "Step":
-                        painter.drawLine(last_point, QPointF(point.x(), last_point.y()))
-                        painter.drawLine(QPointF(point.x(), last_point.y()), point)
-                    elif self.interp == "Linear":
-                        painter.drawLine(last_point, point)
-                    elif self.interp == "Cubic":
-                        path.cubicTo(QPointF(int((point.x() + last_point.x()) / 2), point.y()), QPointF(int((point.x() + last_point.x()) / 2), last_point.y()), point)
-                if self.interp == "Trig":
-                    painter.drawLine(QPointF(point), QPointF(point.x(), self.height()))
-                if self.interp == "Cubic":
-                    painter.drawPath(path)
-                last_point = point
-        else:
-            path = self.buildPath()
-            painter.drawPath(path)
-        # draw points
-        painter.setPen(Qt.GlobalColor.white)
-        painter.setBrush(Qt.GlobalColor.gray)
-        for index, point in enumerate(self.gui_curve):
-            gradient = QRadialGradient(point, self.point_radius)
-            gradient.setColorAt(0, Qt.GlobalColor.white)  # centro
-            gradient.setColorAt(1, Qt.GlobalColor.gray)  # bordo
-            painter.setBrush(gradient)
-            painter.drawEllipse(point, self.point_radius, self.point_radius)
-            if self.track == index:
-                x = point.x()
-                if x > (self.width() - 50):
-                    x -= 50
-                y = point.y() - 10
-                if y < 30:
-                    y += 50
-                val = str(self.curve[index])
-                if len(val) >= max(len(str(self.minY)), len(str(self.maxY))) + 2:
-                    val = val[:max(len(str(self.minY)), len(str(self.maxY))) + 2]
-                val = val + " " + self.unitY
-                painter.drawText(x, y, val)
-                xval = str(self.x_values[index])
-                if len(xval) >= max(len(str(self.minX)), len(str(self.maxX))) + 2:
-                    xval = xval[:max(len(str(self.minX)), len(str(self.maxX))) + 2]
-                xval = xval + " " + self.unitX
-                painter.drawText(x, y - 10, xval)
-        # Draw Cursor
-        painter.drawLine(self.cursor_pos, 0, self.cursor_pos, self.height())
-
-    def __getstate__(self):
-        d = {
-            "npoints": self.npoints,
-            "gui_curve": self.gui_curve,
-            "x_values": self.x_values,
-            "curve": self.curve,
-            "minX": self.minX,
-            "maxX": self.maxX,
-            "minY": self.minY,
-            "maxY": self.maxY,
-            "interp": self.interp
-        }
-        return d
-
-    def __setstate__(self, state):
-        self.npoints = state["npoints"]
-        self.gui_curve = state["gui_curve"]
-        self.x_values = state["x_values"]
-        self.curve = state["curve"]
-        self.minX = state["minX"]
-        self.maxX = state["maxX"]
-        self.minY = state["minY"]
-        self.maxY = state["maxY"]
-        self.interp = state["interp"]
-        self.update()
-
-
 class CurveXY(QLabel):
-    def __init__(self, parent=None, npoints=3, minY=0.0, maxY=1.0, initial_valuesY=0.0, unitY="", minX=0, maxX=1000, unitX="", interp="Quad", name=""):
+    def __init__(self, parent=None, npoints=3, minY=0.0, maxY=1.0, initial_valuesY=0.0, unitY="", minX=0, maxX=1000, unitX="", interp="Quad", log_scale=False, name=""):
         super().__init__(parent)
         self.parent = parent
+        self.params_widget = self.parent.params_widget
         self.name = name
         self.setObjectName("curvexy")
         self.setAutoFillBackground(True)
@@ -612,10 +328,11 @@ class CurveXY(QLabel):
         self.unitY = unitY
         self.minX = minX
         self.maxX = maxX
-        if self.minY >= 0 and self.maxY >= 0:
-            self.log_scale_y = True
-        else:
-            self.log_scale_y = False
+        self.log_scale_y = log_scale
+        # if self.minY > 0 and self.maxY > 0:
+        #     self.log_scale_y = True
+        # else:
+        #     self.log_scale_y = False
         self.setFixedWidth(int(self.maxX))
         self.unitX = unitX
         self.x_gui = [(i * self.width() / (self.npoints - 1)) for i in range(self.npoints)]
@@ -630,6 +347,9 @@ class CurveXY(QLabel):
 
     def set_snap_to_grid(self, snap):
         self.snap_to_grid = snap
+
+    def log_to_lin(self, value):
+        return math.pow(10, value)
 
     def set_cursor(self, cursor_pos):
         self.cursor_pos = int(cursor_pos)
@@ -667,8 +387,7 @@ class CurveXY(QLabel):
         # print(f"self.x_values before zoom: {self.x_values}")
         self.x_values = [x_v * scale_factor for x_v in self.x_values]
         self.calcGUICurve()
-        self.calcCurveFromGUI()
-        # print(f"self.x_values after zoom: {self.x_values}")
+        # self.calcCurveFromGUI()
         self.update()
 
     def zoom_in(self):
@@ -736,6 +455,7 @@ class CurveXY(QLabel):
                 self.gui_curve[self.track].setX(np.clip(new_x, 0, self.width()))
             self.gui_curve[self.track].setY(np.clip(event.position().y(), 0, self.height()))
             # print(self.x_gui[self.track], self.width())
+            c_print("red", f"tracked index: {self.track}")
             self.calcCurveFromGUI()
         self.update()
 
@@ -749,13 +469,15 @@ class CurveXY(QLabel):
         for index, point in enumerate(self.curve):
             self.curve[index] = functions.mmap(point, [self.minY, self.maxY], [min_, self.maxY])
         self.minY = min_
-        self.calcCurveFromGUI()
+        # self.calcCurveFromGUI()
+        self.calcGUICurve()
 
     def setMax(self, max_):
         for index, point in enumerate(self.curve):
             self.curve[index] = functions.mmap(point, [self.minY, self.maxY], [self.minY, max_])
         self.maxY = max_
-        self.calcCurveFromGUI()
+        # self.calcCurveFromGUI()
+        self.calcGUICurve()
 
     def setInterp(self, interp):
         if interp not in ["Step", "Linear", "Quad", "Cubic", "Trig"]:
@@ -768,12 +490,13 @@ class CurveXY(QLabel):
         if scale == "Lin":
             self.log_scale_y = False
         else:
-            if self.minY >= 0 and self.maxY >= 0:
+            if self.minY > 0 and self.maxY > 0:
                 self.log_scale_y = True
             else:
                 self.log_scale_y = False
+        self.params_widget.scale_btn.setText("Log" if self.log_scale_y else "Lin")
         self.calcGUICurve()
-        print(f"log_scale_y is: {self.log_scale_y}")
+        # self.calcCurveFromGUI()
 
     def recalc_y_GUI(self):
         for index, point in enumerate(self.gui_curve):
@@ -781,36 +504,34 @@ class CurveXY(QLabel):
 
     def calcGUICurve(self):
         self.gui_curve = []
-        for i in range(self.npoints):
+        for i in range(len(self.curve)):
             x = self.x_values[i] * self.zoom
-            # print(f"x: {x}; [self.minX, self.maxX]: {[self.minX, self.maxX]}")
-            self.x_values[i] = functions.mmap(x, [0, self.width()], [self.minX, self.maxX])
-            # print(f"self.x_values[i]: {self.x_values[i]}")
             y_value = self.curve[i]
+
+            # Trasformazione dei valori Y in base alla scala
             if self.log_scale_y:
-                if y_value <= 0:
-                    y_value = self.minY
-                y_value = math.log10(y_value) if y_value > 0 else 0
                 minY_log = math.log10(self.minY) if self.minY > 0 else 0
                 maxY_log = math.log10(self.maxY) if self.maxY > 0 else 0
-                # print(f"min max map curve {self.name} {[minY_log, maxY_log], [self.height(), 0]}")
-                y = functions.mmap(y_value, [minY_log, maxY_log], [self.height(), 0])  # * self.zoom
+                y_value_log = math.log10(y_value) if y_value > 0 else 0
+                y = functions.mmap(y_value_log, [minY_log, maxY_log], [self.height(), 0])
             else:
-                y = functions.mmap(y_value, [self.minY, self.maxY], [self.height(), 0])  # * self.zoom
-            # print(f"Adding point: {QPointF(x, y)}, {x}, {y}")
+                y = functions.mmap(y_value, [self.minY, self.maxY], [self.height(), 0])
+
             self.gui_curve.append(QPointF(x, y))
 
     def calcCurveFromGUI(self):
-        for i in range(self.npoints):
+        for i in range(len(self.gui_curve)):
             x = self.gui_curve[i].x() / self.zoom
             y = self.gui_curve[i].y()
+
             if self.log_scale_y:
                 minY_log = math.log10(self.minY) if self.minY > 0 else 0
-                maxY_log = math.log10(self.maxY)
-                y_value = functions.mmap(y, [self.height(), 0], [minY_log, maxY_log])
-                self.curve[i] = 10 ** y_value
+                maxY_log = math.log10(self.maxY) if self.maxY > 0 else 0
+                y_value_log = functions.mmap(y, [self.height(), 0], [minY_log, maxY_log])
+                self.curve[i] = 10 ** y_value_log  # Inverso della trasformazione logaritmica
             else:
                 self.curve[i] = functions.mmap(y, [self.height(), 0], [self.minY, self.maxY])
+            c_print("green", f"self.curve is {self.curve}")
             self.x_values[i] = functions.mmap(x, [0, self.width()], [self.minX, self.maxX]) * self.zoom
 
     def resizeEvent(self, event):
@@ -890,6 +611,7 @@ class CurveXY(QLabel):
         x = int(point.x())
         y = int(point.y())
         val = f"{self.curve[index]:.2f} {self.unitY}"
+        c_print("yellow", f"point value is {val} - scale: {'log' if self.log_scale_y else 'lin'}")
         xval = f"{self.x_values[index]:.2f} {self.unitX}"
 
         if y < self.height() / 2:
@@ -926,20 +648,26 @@ class CurveXY(QLabel):
             "maxX": self.maxX,
             "minY": self.minY,
             "maxY": self.maxY,
-            "interp": self.interp
+            "interp": self.interp,
+            "log_scale_y": self.log_scale_y
         }
         return d
 
     def __setstate__(self, state):
         self.npoints = state["npoints"]
-        self.gui_curve = state["gui_curve"]
+        # self.gui_curve = state["gui_curve"]
         self.x_values = state["x_values"]
         self.curve = state["curve"]
         self.minX = state["minX"]
         self.maxX = state["maxX"]
         self.minY = state["minY"]
         self.maxY = state["maxY"]
-        self.interp = state["interp"]
+        self.setInterp(state["interp"])
+        try:
+            self.setScale("Log" if state["log_scale_y"] else "Lin")
+        except:
+            c_print("yellow", "WARNING: CurveXY has no log_scale_y saved! Please check and resave the file to remove this discrepancy.")
+        # self.calcGUICurve()
         self.update()
 
 
@@ -1010,7 +738,7 @@ class EnvelopeParams(QWidget):
         self.scale_menu.setObjectName("widget-param")
         self.scale_menu.addAction("Lin", self.envelope.change_scale_func)
         self.scale_menu.addAction("Log", self.envelope.change_scale_func)
-        self.scale_btn.setText("Log")
+        self.scale_btn.setText("Lin")
         # self.envelope.change_scale_func()
         self.scale_btn.setMenu(self.scale_menu)
         self.scale_lay = QHBoxLayout()
@@ -1090,6 +818,25 @@ class EnvelopeParams(QWidget):
     def net_function(self):
         dialog = NetworkInputDialog(self.envelope.curve)
         dialog.exec()
+
+    def __getstate__(self):
+        d = {
+            "minY": self.envelope.min,
+            "maxY": self.envelope.max,
+            "interp": self.envelope.interp,
+            "scale_y": self.scale_btn.text()
+        }
+        return d
+
+    def __setstate__(self, state):
+        try:
+            self.scale_btn.setText(state["scale_y"])
+            self.interp_btn.setText(state["interp"])
+            self.min_input.setValue(state["minY"])
+            self.max_input.setValue(state["maxY"])
+            self.update()
+        except:
+            c_print("yellow", "WARNING: EnvelopeParams wasn't saved with __getstate__ ! Please check and resave the file to remove this discrepancy.")
 
 
 class NetworkInputDialog(QDialog):
@@ -1292,7 +1039,7 @@ class NumPyInputDialog(QDialog):
 
     def open_npy_fnc(self):
         context = {"start": self.min_x, "end": self.max_x, "math": math, "random": random}
-        filename, _ = QFileDialog.getOpenFileName(self, "Select NumPy File", "/Users/francescodani/Documents/SUPSI/DEEP/dattilologia-aumentazione/data", filter="NumPy Files (*.npy)")
+        filename, _ = QFileDialog.getOpenFileName(self, "Select NumPy File", "/Users/francescodani/Downloads", filter="NumPy Files (*.npy)")
         if os.path.exists(filename) and ".npy" in filename:
             print("filename:", filename)
             self.npy_data = np.load(filename)
@@ -1516,12 +1263,9 @@ class Envelope(QLabel):
         self.interp = interp
         self.zoom = 1.0
         self.params_widget = EnvelopeParams(envelope=self)
-        self.curve = CurveXY(parent=self, npoints=self.npoints, minX=0, maxX=self.length, minY=self.min, maxY=self.max, initial_valuesY=init_, interp=self.interp, name=self.name)
+        self.curve = CurveXY(parent=self, npoints=self.npoints, minX=0, maxX=self.length, minY=self.min, maxY=self.max, initial_valuesY=init_, interp=self.interp, log_scale=False, name=self.name)
         self.lay = QHBoxLayout()
         self.lay.setSpacing(0)
-
-
-        # self.changeAspect()
         self.lay.addWidget(self.curve, alignment=Qt.AlignmentFlag.AlignLeft)
         self.lay.setSpacing(0)
         self.lay.setContentsMargins(0, 0, 0, 0)
@@ -1684,7 +1428,8 @@ class Envelope(QLabel):
             "length": self.length,
             "interp": self.interp,
             "enabled": self.isEnabled(),
-            "curve": self.curve.__getstate__()
+            "curve": self.curve.__getstate__(),
+            "params_widget": self.params_widget
         }
         return d
 
@@ -1697,6 +1442,11 @@ class Envelope(QLabel):
         self.curve.__setstate__(state["curve"])
         self.setEnabled(state["enabled"])
         self.params_widget = EnvelopeParams(envelope=self)
+        # TODO: implement __setstate__ method for EnvelopeParams Widget
+        try:
+            self.params_widget.__setstate__(state["params_widget"])
+        except:
+            c_print("yellow", "WARNING: Envelope has no params_widget saved! Please check and resave the file to remove this discrepancy.")
         # self.params_widget.enabled_check.setChecked(state["enabled"])
         self.collapse()
         self.update()

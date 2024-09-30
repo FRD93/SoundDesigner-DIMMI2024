@@ -197,6 +197,57 @@ def mmap(number, range1, range2):
         return (((number - range1[0]) / (range1[1] - range1[0])) * (range2[1] - range2[0])) + range2[0]
 
 
+def mmap_log(number, g_min, g_max, y_min, y_max):
+    # Evita divisione per zero
+    if g_max == g_min:
+        return 0
+
+    # Definiamo un valore di traslazione minimo per evitare log(0) o log di numeri negativi
+    shift = 1e-10
+
+    # Se y_min o y_max sono <= 0, li trasliamo di una quantità minima
+    if y_min <= 0:
+        y_min += abs(y_min) + shift
+    if y_max <= 0:
+        y_max += abs(y_max) + shift
+
+    # Normalizzazione del numero nel range lineare [g_min, g_max]
+    normalized = (number - g_min) / (g_max - g_min)
+
+    # Mappatura nell'intervallo logaritmico
+    log_min = math.log10(y_min)
+    log_max = math.log10(y_max)
+
+    # Interpolazione lineare nell'intervallo logaritmico
+    log_value = normalized * (log_max - log_min) + log_min
+
+    # Converti dal logaritmo alla scala normale
+    return 10 ** log_value
+
+
+def mmap_from_log(log_value, g_min, g_max, y_min, y_max):
+    # Evita divisione per zero
+    if g_max == g_min:
+        return 0
+
+    # Se g_min o g_max sono negativi o zero, aggiungiamo una costante per evitare problemi
+    shift = 1e-10
+    if g_min <= 0:
+        g_min += abs(g_min) + shift
+    if g_max <= 0:
+        g_max += abs(g_max) + shift
+
+    # Applichiamo il logaritmo ai limiti logaritmici g_min e g_max
+    log_min = math.log10(g_min)
+    log_max = math.log10(g_max)
+
+    # Normalizzazione del valore su scala logaritmica
+    normalized = (log_value - log_min) / (log_max - log_min)
+
+    # Mappatura lineare tra [y_min, y_max]
+    return normalized * (y_max - y_min) + y_min
+
+
 def rotate(list, N):
     """
     Rotate a list by N elements and convert to numpy array.
