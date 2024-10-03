@@ -1235,7 +1235,7 @@ class AudioMIDIWidget(SimpleWidget):
             self.group.free()
         except:
             pass
-        self.group = Group(self.server, self.uuid, "head", 0)
+        self.group = Group(self.server, self.uuid, "head", 0)  # TODO: check if inside a subpatch, targetID should not be 0!
 
     def processNote(self, note):
         # note.describe()

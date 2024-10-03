@@ -653,14 +653,14 @@ class MIDIClipPlayer:
 
     def recalcNotes(self):
         if self.midiclip is not None:
-            print("Recalcing notes")
             self.notes = self.midiclip.getNotes()
             self.onsets = [note.getStartTick() + self.start_tick for note in self.notes]
+            print("Onsets:", self.onsets)
         else:
             print("No midiclip available")
 
     def setStartMeasure(self, measure):
-        self.start_tick = measure * PPQN * 4
+        self.start_tick = int(measure * PPQN * 4)
         self.recalcNotes()
 
     def getStartMeasure(self):
@@ -680,29 +680,33 @@ class MIDIClipPlayer:
         self.loop = loop
 
     def process_tick(self, tick):
+        if self.loop and tick > self.start_tick:
+            tick = ((tick - self.start_tick) % self.midiclip.length) + self.start_tick
+        # print("Processing tick:", tick)
         for index, onset in enumerate(self.onsets):
             if tick == onset:
                 # print(f"Propagating MIDI Note to widget: {self.widget}")
                 if self.widget is not None:
                     self.widget.propagateMIDINote(self.notes[index])
 
-    def threadFunc(self, clock):
-        notes = self.midiclip.getNotes()
-        onsets = [note.getStartTick() + self.start_tick for note in notes]
-        while len(self.midiclip.getNotes()) > 0:
-            clock.wait()
-            clock_count = clock.getCount()
-            if self.loop and (clock_count >= self.start_tick):
-                clock_count = ((clock_count - self.start_tick) % self.midiclip.length) + self.start_tick
-            for index, onset in enumerate(onsets):
-                if clock_count == onset:
-                    if self.widget is not None:
-                        self.widget.propagateMIDINote(self.midiclip.getNotes()[index])
-                    if (index == (len(onsets) - 1)) and not self.loop:
-                        self.has_to_stop = True
-            if self.has_to_stop:
-                self.isPlaying = False
-                break
+    # def threadFunc(self, clock):
+    #     notes = self.midiclip.getNotes()
+    #     onsets = [note.getStartTick() + self.start_tick for note in notes]
+    #     print("Onsets:", onsets)
+    #     while len(self.midiclip.getNotes()) > 0:
+    #         clock.wait()
+    #         clock_count = clock.getCount()
+    #         if self.loop and (clock_count >= self.start_tick):
+    #             clock_count = ((clock_count - self.start_tick) % self.midiclip.length) + self.start_tick
+    #         for index, onset in enumerate(onsets):
+    #             if clock_count == onset:
+    #                 if self.widget is not None:
+    #                     self.widget.propagateMIDINote(self.midiclip.getNotes()[index])
+    #                 if (index == (len(onsets) - 1)) and not self.loop:
+    #                     self.has_to_stop = True
+    #         if self.has_to_stop:
+    #             self.isPlaying = False
+    #             break
 
     def noteThread(self, note):
         print("\tPlaying note on scsynth:", note.getNote())
@@ -713,14 +717,15 @@ class MIDIClipPlayer:
     def play(self):
         if not self.isPlaying:
             self.has_to_stop = False
-            self.thread = Thread(target=self.threadFunc, args=(self.clock,), daemon=True)
-            self.thread.start()
+            # self.thread = Thread(target=self.threadFunc, args=(self.clock,), daemon=True)
+            # self.thread.start()
         self.isPlaying = True
 
     def stop(self):
-        if self.thread is not None:
-            self.has_to_stop = True
-            self.thread = None
+        self.has_to_stop = True
+        # if self.thread is not None:
+            # self.has_to_stop = True
+            # self.thread = None
 
 
 class TempoClock(threading.Event):
@@ -818,7 +823,6 @@ class TempoClock(threading.Event):
 
     def next(self):
         if self.time_bounds["start"] <= self.tick_counter < self.time_bounds["end"]:
-            self.tick_counter += 1
             # if (self.tick_counter % 100) == 0:
             #     print(self.getCurrentTime())
             # Compute Curve values at current tick for enabled WidgetCurves
@@ -864,6 +868,7 @@ class TempoClock(threading.Event):
             else:  # In this mode, when region ends the end value is maintained
                 if self.tick_counter >= self.time_bounds["end"]:
                     self.tick_counter = self.time_bounds["end"]
+        self.tick_counter += 1  # Moved from the beginning to the end of the function
 
     def reset(self):
         self.tick_counter = self.time_bounds["start"]
@@ -873,9 +878,9 @@ class TempoClock(threading.Event):
             self.set()
             self.clear()
             time.sleep(self.wait_time)
-            self.next()
             if self.has_to_stop:
                 break
+            self.next()
 
 
 if __name__ == "__main__":

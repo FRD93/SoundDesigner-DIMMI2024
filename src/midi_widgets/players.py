@@ -85,7 +85,7 @@ class MIDIClipPlayer(MIDIWidget):
         self.lay.setSpacing(0)
         self.lay.addWidget(self.lbl)
         self.lay.addLayout(self.row1)
-        self.lay.addLayout(self.row2)
+        # self.lay.addLayout(self.row2)  # Disabilitato "Scegli strumento"
         self.lay.addLayout(self.row3)
 
         self.setLayout(self.lay)
@@ -97,6 +97,7 @@ class MIDIClipPlayer(MIDIWidget):
         self.midi_clip_player.process_tick(tick)
 
     def setStartMeasure(self, value):
+        value = int(value)
         # print("Setting MIDIClipPlayer's MIDIClip start measure to:", value)
         self.set_measure_spin.setValue(value)
         self.midi_clip_player.setStartMeasure(value)
@@ -113,12 +114,12 @@ class MIDIClipPlayer(MIDIWidget):
             self.midi_clip_player.setLoop(False)
 
     def allow_to_play(self):
-        print("Checking Allow To Play...")
+        # print("Checking Allow To Play...")
         if self.allow_to_play_check.isChecked():
-            print("\tPlay Allowed")
+            # print("\tPlay Allowed")
             self.midi_clip_player.play()
         else:
-            print("\tPlay Denied")
+            # print("\tPlay Denied")
             self.midi_clip_player.stop()
 
     def reset_tonalities(self):
@@ -266,8 +267,9 @@ class MIDIClipPlayer(MIDIWidget):
         self.set_midi_clip(state["midi_file"])
         self.select_midi_clip_butt.setText(self.midi_file_name)
         # Ricrea il MIDIClipPlayer
-        self.midi_clip_player = classes.MIDIClipPlayer(midiclip=self.midi_clip, clock=self.clock.clock, server=self.server, loop=self.loop_check, widget=self)
-        self.midi_clip_player.recalcNotes()
+        start_tick = int(PPQN * 4 * float(state["start_measure"]))
+        self.midi_clip_player = classes.MIDIClipPlayer(midiclip=self.midi_clip, clock=self.clock.clock, server=self.server, loop=self.loop_check, start_tick=start_tick, widget=self)
+        # self.midi_clip_player.recalcNotes()
         # Setta Tonalità
         self.set_key(state["key"])
         # Setta Strumento
