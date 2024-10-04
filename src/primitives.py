@@ -1198,7 +1198,7 @@ class AudioMIDIWidget(SimpleWidget):
         self.synth_name = synth_name
         self.synth_args = synth_args
         self.synth = None
-        self.note_synths = {}
+        self.note_synths = {str(i): None for i in range(128)}
         self.resetNoteSynths()
         self.n_in = n_audio_in
         self.n_out = n_audio_out
@@ -1338,20 +1338,34 @@ class AudioMIDIWidget(SimpleWidget):
         params.append(amplitude)
         params.append("a_dur")
         params.append(duration)
-        if self.note_synths[str(note.getNote())] is not None:
-            self.note_synths[str(note.getNote())].set("gate", 0)  # release synth if any
-            self.note_synths[str(note.getNote())] = None
-        self.note_synths[str(note.getNote())] = Synth(self.server, self.synth_name, node=None, args=params,
-                                                      addAction="head", targetID=self.group.getNodeID())
+
+        # IMPORTANT: if a Synth has "a_dur" parameter, it means than it owns a DoneAction=2, which means it will free itself after duration
+        if not "a_dur" in self.synth_args.keys():
+            if self.note_synths[str(note.getNote())] is not None:
+                self.note_synths[str(note.getNote())].set("gate", 0)  # release synth if any
+                self.note_synths[str(note.getNote())] = None
+        else:
+            if self.note_synths[str(note.getNote())] is not None:
+                del self.note_synths[str(note.getNote())]
+                self.note_synths[str(note.getNote())] = None
+
+        self.note_synths[str(note.getNote())] = Synth(self.server, self.synth_name, node=None, args=params, addAction="head", targetID=self.group.getNodeID())
         for arg in self.synth_args.keys():
             if self.synth_args[arg]["type"] == "audio":
                 if int(self.synth_args[arg]["bus"]) > 0:
                     self.note_synths[str(note.getNote())].map(arg, self.synth_args[arg]["bus"])
-        # time.sleep(60 * note.getDuration() / (note.getBPM() * PPQN))
+
         time.sleep(duration)
-        if self.note_synths[str(note.getNote())] is not None:
-            self.note_synths[str(note.getNote())].set("gate", 0)
-            self.note_synths[str(note.getNote())] = None
+
+        # IMPORTANT: if a Synth has "a_dur" parameter, it means than it owns a DoneAction=2, which means it will free itself after duration
+        if not "a_dur" in self.synth_args.keys():
+            if self.note_synths[str(note.getNote())] is not None:
+                self.note_synths[str(note.getNote())].set("gate", 0)
+                self.note_synths[str(note.getNote())] = None
+        else:
+            if self.note_synths[str(note.getNote())] is not None:
+                del self.note_synths[str(note.getNote())]
+                self.note_synths[str(note.getNote())] = None
 
     def change_in_ch(self, index, value):
         self.input_channels[index] = value
