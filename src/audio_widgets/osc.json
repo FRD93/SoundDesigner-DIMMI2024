@@ -161,5 +161,74 @@
 				"bus": -1
 			}
 		}
+	},
+    "WhiteNoise": {
+		"synth_name": "WhiteNoise",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"a_mul": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Bias (abs)",
+				"type": "audio",
+				"min": -20000,
+				"max": 20000,
+				"val": 0.0,
+				"bus": -1
+			}
+		}
+	},
+    "PinkNoise": {
+		"synth_name": "PinkNoise",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"a_mul": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Bias (abs)",
+				"type": "audio",
+				"min": -20000,
+				"max": 20000,
+				"val": 0.0,
+				"bus": -1
+			}
+		}
+	},
+    "BrownNoise": {
+		"synth_name": "BrownNoise",
+		"n_in": 0,
+        "n_out": 1,
+        "args": {
+			"a_mul": {
+				"desc": "Amplitude (abs)",
+				"type": "audio",
+				"min": 0.0,
+				"max": 1.2,
+				"val": 0.75,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Bias (abs)",
+				"type": "audio",
+				"min": -20000,
+				"max": 20000,
+				"val": 0.0,
+				"bus": -1
+			}
+		}
 	}
 }

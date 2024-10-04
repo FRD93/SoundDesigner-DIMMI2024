@@ -49,4 +49,47 @@ SynthDef(\LFTri, { | out_ch_0=0, a_freq=440, selector_freq=0, a_mul=1, selector_
 	Out.ar(out_ch_0, sig);
 	Out.kr(out_ch_0, RMS.kr(sig));
 }).writeDefFile;
+
+SynthDef(\WhiteNoise, { | out_ch_0=0, a_mul=1, selector_mul=0, a_add=0, selector_add=0 |
+	var sig;
+	a_mul = Select.ar(selector_mul, [Lag.ar(K2A.ar(a_mul), 0.001), a_mul]);
+	a_add = Select.ar(selector_add, [Lag.ar(K2A.ar(a_add), 0.001), a_add]);
+	sig = WhiteNoise.ar(a_mul, a_add);
+	Out.ar(out_ch_0, sig);
+	Out.kr(out_ch_0, RMS.kr(sig));
+}).writeDefFile;
+
+SynthDef(\PinkNoise, { | out_ch_0=0, a_mul=1, selector_mul=0, a_add=0, selector_add=0 |
+	var sig;
+	a_mul = Select.ar(selector_mul, [Lag.ar(K2A.ar(a_mul), 0.001), a_mul]);
+	a_add = Select.ar(selector_add, [Lag.ar(K2A.ar(a_add), 0.001), a_add]);
+	sig = PinkNoise.ar(a_mul, a_add);
+	Out.ar(out_ch_0, sig);
+	Out.kr(out_ch_0, RMS.kr(sig));
+}).writeDefFile;
+
+SynthDef(\BrownNoise, { | out_ch_0=0, a_mul=1, selector_mul=0, a_add=0, selector_add=0 |
+	var sig;
+	a_mul = Select.ar(selector_mul, [Lag.ar(K2A.ar(a_mul), 0.001), a_mul]);
+	a_add = Select.ar(selector_add, [Lag.ar(K2A.ar(a_add), 0.001), a_add]);
+	sig = BrownNoise.ar(a_mul, a_add);
+	Out.ar(out_ch_0, sig);
+	Out.kr(out_ch_0, RMS.kr(sig));
+}).writeDefFile;
+
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

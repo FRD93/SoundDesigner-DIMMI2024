@@ -1,0 +1,48 @@
+{
+    "TRand": {
+		"synth_name": "TRand",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_from": {
+				"desc": "Value From (abs)",
+				"type": "audio",
+				"min": -1000000000.0,
+				"max": 1000000000.0,
+				"val": 0.0,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Value To (abs)",
+				"type": "audio",
+				"min": -1000000000.0,
+				"max": 1000000000.0,
+				"val": 1.0,
+				"bus": -1
+			}
+		}
+	},
+    "TExpRand": {
+		"synth_name": "TExpRand",
+		"n_in": 1,
+        "n_out": 1,
+        "args": {
+			"a_from": {
+				"desc": "Value From (abs)",
+				"type": "audio",
+				"min": 0.00001,
+				"max": 1000000000.0,
+				"val": 0.00001,
+				"bus": -1
+			},
+			"a_add": {
+				"desc": "Value To (abs)",
+				"type": "audio",
+				"min": 0.00001,
+				"max": 1000000000.0,
+				"val": 1.0,
+				"bus": -1
+			}
+		}
+	}
+}

@@ -480,7 +480,9 @@ class MIDIClip:
             self.computeChords()
             self.computeNotes()
             self.applyKeyChordsOnNotes()
-            self.length = int(mido.second2tick(self.midi.length, self.ppqn, self.tempo) * PPQN / self.ppqn)
+            self.length = self.get_eot_tick(midi_file=self.midi)
+            if self.length is None:
+                self.length = int(mido.second2tick(self.midi.length, self.ppqn, self.tempo) * PPQN / self.ppqn)
         else:
             self.name = custom_data["name"]
             self.key = custom_data["key"]
@@ -493,14 +495,22 @@ class MIDIClip:
             self.tempo = self.bpm / 60.
             self.ppqn = PPQN
             self.applyKeyChordsOnNotes()
-            self.length = int(max([note.getDuration() + note.getStartTick() for note in self.notes]))
-
-        print("self.key:", self.key, "self.mode:", self.mode, "self.ppqn:", self.ppqn, "self.tempo:", self.tempo, "self.length:", self.length)
-        print("Describing notes in file: {}".format(self.name))
-        for note in self.notes:
-            note.describe()
+            self.length = self.get_eot_tick(midi_file=self.midi)
+            if self.length is None:
+                self.length = int(max([note.getDuration() + note.getStartTick() for note in self.notes]))
+        print("MIDI File num ticks:", self.length)
         if transpose_to_C:
             self.transpose(-1 * self.key)
+
+    def get_eot_tick(self, midi_file):
+        eot_tick = None
+        for i, track in enumerate(midi_file.tracks):
+            for msg in reversed(track):
+                if msg.type == 'end_of_track' and msg.time > 0:
+                    eot_tick = msg.time
+            if eot_tick is not None:
+                return eot_tick  # Returns the tick of the EOT message
+        return None  # Return None if no EOT message is found
 
     def matchToTrack(self, track):
         """Modella accordi e note di questa traccia sulla base di un'altra traccia (ritorna una copia di questa istanza modificata)
@@ -634,12 +644,13 @@ class MIDIClip:
 
 
 class MIDIClipPlayer:
-    def __init__(self, midiclip, clock, server=None, loop=True, widget=None, start_tick=0):
+    def __init__(self, midiclip, clock, server=None, loop=True, widget=None, start_tick=0, end_tick=-1):
         self.server = server
         self.clock = clock
         self.notes = []
         self.onsets = []
         self.start_tick = start_tick
+        self.end_tick = end_tick
         self.midiclip = midiclip
         self.loop = loop
         self.widget = widget
@@ -662,8 +673,15 @@ class MIDIClipPlayer:
         self.start_tick = int(measure * PPQN * 4)
         self.recalcNotes()
 
+    def setEndMeasure(self, measure):
+        self.end_tick = int(measure * PPQN * 4)
+        self.recalcNotes()
+
     def getStartMeasure(self):
         return self.start_tick / (PPQN * 4)
+
+    def getEndMeasure(self):
+        return self.end_tick / (PPQN * 4)
 
     def setServer(self, server):
         self.server = server
@@ -679,9 +697,9 @@ class MIDIClipPlayer:
         self.loop = loop
 
     def process_tick(self, tick):
-        if tick == 0:
-            c_print("green", f"Processing tick in MIDIClipPlayer(object) associated to MIDIClipPlayer(MIDIWidget): {self.widget.uuid}")
-        if self.loop and tick > self.start_tick:
+        # if tick == 0:
+        #     c_print("green", f"Processing tick in MIDIClipPlayer(object) associated to MIDIClipPlayer(MIDIWidget): {self.widget.uuid}")
+        if self.loop and (tick > self.start_tick) and (tick <= self.end_tick if self.end_tick > 0 else True):
             tick = ((tick - self.start_tick) % self.midiclip.length) + self.start_tick
         # print("Processing tick:", tick)
         for index, onset in enumerate(self.onsets):
@@ -708,7 +726,6 @@ class MIDIClipPlayer:
     #             break
 
     def noteThread(self, note):
-        print("\tPlaying note on scsynth:", note.getNote())
         synth = Synth(self.server, self.instr, ["pitch", note.getNote(), "amp", note.getVelocity() / 127.])
         time.sleep(60 * note.getDuration() / (self.midiclip.getBPM() * PPQN))
         synth.set("gate", 0)

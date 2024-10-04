@@ -1061,7 +1061,7 @@ class MainWindow(QMainWindow):
             style = style.replace("midi-widget-background", _6color_palette_04)
             style = style.replace("midi-widget-border", _6color_palette_06)
             # PatchArea
-            style = style.replace("patch-area-background", _6color_palette_03)
+            style = style.replace("patch-area-background", _6color_palette_02)
             # Application Background
             style = style.replace("app-background", _6color_palette_04)
             # TabWidget

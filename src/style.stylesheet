@@ -60,7 +60,7 @@ QPushButton#widget-param {
     font-family: font-type;
     height: widget-param-height;
     min-height: widget-param-height;
-    border: 2px;
+    border: 1px;
     border-radius: 5px;
     border-style: solid;
     border-color: black;
@@ -69,13 +69,13 @@ QPushButton#widget-param {
 QPushButton#palette {
     background-color: white;
     height: widget-param-height;
-    border: 2px;
+    border: 1px;
     border-radius: 5px;
 }
 QPushButton#palette:checked {
     background-color: lightblue;
     height: widget-param-height;
-    border: 2px;
+    border: 1px;
     border-radius: 5px;
 }
 
@@ -91,8 +91,8 @@ QSpinBox#widget-param {
     font-family: font-type;
     min-height: widget-param-height;
     height: widget-param-height;
-    border: 2px;
-    border-radius: 5px;
+    border: 1px;
+    border-radius: 2px;
     border-style: solid;
     border-color: black;
 }
@@ -103,8 +103,8 @@ QCheckBox#widget-param {
     font-family: font-type;
     height: widget-param-height;
     min-height: widget-param-height;
-    border: 2px;
-    border-radius: 5px;
+    border: 1px;
+    border-radius: 2px;
     border-style: solid;
     border-color: black;
 }

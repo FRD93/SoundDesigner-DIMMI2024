@@ -30,5 +30,20 @@
         "args": {
 
         }
+    },
+    "Bias": {
+        "synth_name": "DC",
+        "n_in": 0,
+        "n_out": 1,
+        "args": {
+            "a_value": {
+                "desc": "Bias Value",
+                "type": "audio",
+                "val": 0.0,
+                "min": -1000000000.0,
+                "max": 1000000000.0,
+                "bus": -1
+            }
+        }
     }
 }
