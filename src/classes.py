@@ -111,21 +111,20 @@ class MIDIManager:
     def set_region_line(self, rl):
         self.region_line = rl
 
-    def connectAll_BAK(self):
-        self.midi_in_threads = []
-        for device in self.midi_in_devices:
-            self.midi_ins.append(rtmidi.MidiIn(int(device)))
-            self.midi_ins[-1].open_port(device)
-            # print("Device:", device)
-            self.midi_in_threads.append(MidiInput(device, self, self.region_manager, self.region_line))
-            # print("Device:", device, "created")
-            self.midi_in_threads[-1].start()
-            # print("Device:", device, "started.")
-        for device in self.midi_out_devices:
-            self.midi_outs.append(rtmidi.MidiOut(int(device)))
-            self.midi_outs[-1].open_port(device)
-            # TODO: Implement MidiOutput class
-            # self.midi_in_threads.append(MidiOutput(device, self, self.region_manager, self.region_line))
+    # def connectAll_BAK(self):
+    #     self.midi_in_threads = []
+    #     for device in self.midi_in_devices:
+    #         self.midi_ins.append(rtmidi.MidiIn(int(device)))
+    #         self.midi_ins[-1].open_port(device)
+    #         # print("Device:", device)
+    #         self.midi_in_threads.append(MidiInput(device, self, self.region_manager, self.region_line))
+    #         # print("Device:", device, "created")
+    #         self.midi_in_threads[-1].start()
+    #         # print("Device:", device, "started.")
+    #     for device in self.midi_out_devices:
+    #         self.midi_outs.append(rtmidi.MidiOut(int(device)))
+    #         self.midi_outs[-1].open_port(device)
+    #         # self.midi_in_threads.append(MidiOutput(device, self, self.region_manager, self.region_line))
 
     def connectAll(self):
         self.midi_in_threads = []
@@ -590,7 +589,7 @@ class MIDIClip:
             if(msg.type == "note_off") or ((msg.type == "note_on") and (int(msg.velocity) == 0)):
                 self.tmp_notes = np.concatenate((self.tmp_notes, [[int(tick), 0, int(msg.note), int(msg.velocity)]]), axis=0)
         self.tmp_notes = self.tmp_notes[1:].tolist()
-        self.tmp_note_ons = [None] * 12744
+        self.tmp_note_ons = [None] * 12744  # TODO: check correctness of this fixed number
         for index, note in enumerate(self.tmp_notes):
             if (note[1] == 1):
                 self.tmp_note_ons[note[2]] = [note[0], index]
@@ -680,14 +679,14 @@ class MIDIClipPlayer:
         self.loop = loop
 
     def process_tick(self, tick):
+        if tick == 0:
+            c_print("green", f"Processing tick in MIDIClipPlayer(object) associated to MIDIClipPlayer(MIDIWidget): {self.widget.uuid}")
         if self.loop and tick > self.start_tick:
             tick = ((tick - self.start_tick) % self.midiclip.length) + self.start_tick
         # print("Processing tick:", tick)
         for index, onset in enumerate(self.onsets):
             if tick == onset:
-                # print(f"Propagating MIDI Note to widget: {self.widget}")
-                if self.widget is not None:
-                    self.widget.propagateMIDINote(self.notes[index])
+                self.widget.propagateMIDINote(self.notes[index])
 
     # def threadFunc(self, clock):
     #     notes = self.midiclip.getNotes()

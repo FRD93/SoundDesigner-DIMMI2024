@@ -131,3 +131,36 @@ class MIDINoteTranspose(MIDIWidget):
         super().__setstate__(state)
         self.transpose = state["transpose"]
         self.from_val.setText(str(self.transpose))
+
+
+class MIDIMerge(MIDIWidget):
+    def __init__(self, server, clock, harmony_manager, parent=None, uuid=None, n_midi_in=2, n_midi_out=1):
+        super().__init__(clock, harmony_manager, parent, uuid=uuid, n_midi_in=n_midi_in, n_midi_out=n_midi_out)
+        self.transpose = 0
+        self.lay = QVBoxLayout()
+        self.name = QLabel("Merge MIDI Events")
+        self.name.setObjectName("widget-title")
+        self.lay.addWidget(self.name)
+        # self.from_lay = QHBoxLayout()
+        # self.from_lbl = QLabel("Transpose:")
+        # self.from_lbl.setObjectName("widget-param")
+        # self.from_lay.addWidget(self.from_lbl)
+        # self.from_val = QLineEdit()
+        # self.from_val.setObjectName("widget-param")
+        # self.from_val.setText(str(self.transpose))
+        # self.from_validator = QIntValidator(-127, 127)
+        # self.from_val.setValidator(self.from_validator)
+        # self.from_val.textChanged.connect(self.set_transpose)
+        # self.from_lay.addWidget(self.from_val)
+        # self.lay.addLayout(self.from_lay)
+        self.setLayout(self.lay)
+
+    def __getstate__(self):
+        d = super().__getstate__()
+        d.update({
+
+        })
+        return d
+
+    def __setstate__(self, state):
+        super().__setstate__(state)

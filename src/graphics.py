@@ -616,7 +616,8 @@ class Patch(QWidget):
         self.audio_widgets_names = [key for kind in self.widgets["audio"].keys() for key in self.widgets["audio"][kind]]
         self.midi_widgets_names = [cls.__name__ for cls in MIDIWidget.__subclasses__()]
         self.audio_midi_widgets_names = [key for kind in self.widgets["audio_midi"].keys() for key in self.widgets["audio_midi"][kind]] + [cls.__name__ for cls in AudioMIDIWidget.__subclasses__()]
-        print(self.audio_midi_widgets_names)
+        print("midi_widgets_names", self.midi_widgets_names)
+        print("audio_midi_widgets_names", self.audio_midi_widgets_names)
         self.audio_widgets = []
         self.midi_widgets = []
         self.audio_midi_widgets = []

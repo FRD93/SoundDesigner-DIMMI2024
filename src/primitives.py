@@ -46,6 +46,7 @@ class QLabelT(QLabel):
     Attributes:
         parent (QWidget or None): Parent.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setToolTip("")
@@ -89,9 +90,9 @@ class AudioMeter(QWidget):
 
         # Draw gradient bar
         gradient = QLinearGradient(0, 0, rect.width(), 0)
-        gradient.setColorAt(0.0, QColor(0, 0, 255))   # Blue
-        gradient.setColorAt(0.5, QColor(0, 255, 0))   # Green
-        gradient.setColorAt(1.0, QColor(255, 0, 0))   # Red
+        gradient.setColorAt(0.0, QColor(0, 0, 255))  # Blue
+        gradient.setColorAt(0.5, QColor(0, 255, 0))  # Green
+        gradient.setColorAt(1.0, QColor(255, 0, 0))  # Red
 
         painter.fillRect(rect.adjusted(0, 20, 0, 0), gradient)
 
@@ -124,14 +125,14 @@ class PlaceCable(QUndoCommand):
         self.inlet = inlet
         self.type = type
         self.cable = self.patch_area.current_cable
-        print(f"self.cable is {self.cable}")
+        # print(f"self.cable is {self.cable}")
 
     def undo(self):
         if self.cable is not None:
             if type(self.widget_in) == SubPatchInstanceWidget:
                 self.widget_in.subpatch.update_subpatch_instances()
-                print("SubPatchInstanceWidget -> self.widget_in.subpatch.update_subpatch_instances()")
-                print(self.widget_in, self.inlet)
+                # print("SubPatchInstanceWidget -> self.widget_in.subpatch.update_subpatch_instances()")
+                # print(self.widget_in, self.inlet)
                 self.cable.disconnectSubPatchWidgets()
             else:
                 self.cable.disconnectWidgets()
@@ -140,13 +141,12 @@ class PlaceCable(QUndoCommand):
 
     def redo(self):
         if self.cable is not None:
-            print(f"Placing {self.type} cable from widget {self.cable.widget_out} to widget {self.widget_in}")
+            # print(f"Placing {self.type} cable from widget {self.cable.widget_out} to widget {self.widget_in}")
             if self.type == "Audio":
-                print("Ehi", self.widget_in, type(self.widget_in))
                 if type(self.widget_in) == SubPatchInstanceWidget:
                     self.widget_in.subpatch.update_subpatch_instances()
-                    print("SubPatchInstanceWidget -> self.widget_in.subpatch.update_subpatch_instances()")
-                    print(self.widget_in, self.inlet)
+                    # print("SubPatchInstanceWidget -> self.widget_in.subpatch.update_subpatch_instances()")
+                    # print(self.widget_in, self.inlet)
                     self.cable.addSubPatchInletWidget(self.widget_in, self.inlet)
                 else:
                     self.cable.addInletWidget(self.widget_in, self.inlet)
@@ -178,13 +178,16 @@ class AddCable(QUndoCommand):
         if self.is_first_undo:
             if self.type == "Audio":
                 if type(self.widget) == SubPatchInstanceWidget:
-                    self.cable = AudioCable(x=self.x, y=self.y, widget_out=self.widget, widget_out_id=self.outlet_id, parent=self.widget.patch_area, is_inside_subpatch=True)
+                    self.cable = AudioCable(x=self.x, y=self.y, widget_out=self.widget, widget_out_id=self.outlet_id,
+                                            parent=self.widget.patch_area, is_inside_subpatch=True)
                 else:
-                    self.cable = AudioCable(x=self.x, y=self.y, widget_out=self.widget, widget_out_id=self.outlet_id, parent=self.widget.patch_area, is_inside_subpatch=False)
+                    self.cable = AudioCable(x=self.x, y=self.y, widget_out=self.widget, widget_out_id=self.outlet_id,
+                                            parent=self.widget.patch_area, is_inside_subpatch=False)
                 self.cable.show()
                 self.widget.patch_area.add_audio_cable(self.cable)
             elif self.type == "MIDI":
-                self.cable = MIDICable(x=self.x, y=self.y, widget_out=self.widget, widget_out_id=self.outlet_id, parent=self.widget.patch_area)
+                self.cable = MIDICable(x=self.x, y=self.y, widget_out=self.widget, widget_out_id=self.outlet_id,
+                                       parent=self.widget.patch_area)
                 self.cable.show()
                 self.widget.patch_area.add_midi_cable(self.cable)
             self.widget.destination_widgets.append(self.cable)
@@ -193,7 +196,7 @@ class AddCable(QUndoCommand):
 class ParameterChange(QUndoCommand):
     def __init__(self, widget, key, value):
         super().__init__(f"Changed parameter '{key}' to {value}")
-        print(f"Changed parameter '{key}' to {value}")
+        # print(f"Changed parameter '{key}' to {value}")
         self.widget = widget
         self.key = key
         self.value = value
@@ -276,10 +279,14 @@ class SimpleWidget(QLabel):
         self.setMinimumSize(200, 100)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.widget_outer_colors = {"Audio": QColor(10, 128, 20), "MIDI": QColor(128, 10, 20), "SubPatch": QColor(50, 59, 180)}
-        self.widget_inner_colors = {"Audio": QColor(125, 255, 150), "MIDI": QColor(255, 125, 150), "SubPatch": QColor(100, 100, 240)}
-        self.inlet_svg = {"Audio": QIcon(os.path.join(GRAPHICS_PATH, "AudioInlet_new.svg")), "MIDI": QIcon(os.path.join(GRAPHICS_PATH, "MIDIInlet_new.svg"))}
-        self.outlet_svg = {"Audio": QIcon(os.path.join(GRAPHICS_PATH, "AudioOutlet_new.svg")), "MIDI": QIcon(os.path.join(GRAPHICS_PATH, "MIDIOutlet_new.svg"))}
+        self.widget_outer_colors = {"Audio": QColor(10, 128, 20), "MIDI": QColor(128, 10, 20),
+                                    "SubPatch": QColor(50, 59, 180)}
+        self.widget_inner_colors = {"Audio": QColor(125, 255, 150), "MIDI": QColor(255, 125, 150),
+                                    "SubPatch": QColor(100, 100, 240)}
+        self.inlet_svg = {"Audio": QIcon(os.path.join(GRAPHICS_PATH, "AudioInlet_new.svg")),
+                          "MIDI": QIcon(os.path.join(GRAPHICS_PATH, "MIDIInlet_new.svg"))}
+        self.outlet_svg = {"Audio": QIcon(os.path.join(GRAPHICS_PATH, "AudioOutlet_new.svg")),
+                           "MIDI": QIcon(os.path.join(GRAPHICS_PATH, "MIDIOutlet_new.svg"))}
         self.param_svg = {"Audio": QIcon(os.path.join(GRAPHICS_PATH, "AudioParameter_new.svg"))}
         self.xlet_size = (10, 10)
         self.delete_svg = QIcon(os.path.join(GRAPHICS_PATH, "close-circle.svg"))
@@ -352,10 +359,12 @@ class SimpleWidget(QLabel):
         return QPoint(int(self.geometry().x()), int(self.geometry().y() + y_pos))
 
     def getOutletPos(self, outlet_id):
-        return QPoint(int(self.geometry().x() + self.outs_x[outlet_id] + 2), int(self.geometry().y() + int(self.height()) - 8))
+        return QPoint(int(self.geometry().x() + self.outs_x[outlet_id] + 2),
+                      int(self.geometry().y() + int(self.height()) - 8))
 
     def getMIDIOutletPos(self, midi_outlet_id):
-        return QPoint(int(self.geometry().x() + self.midi_outs_x[midi_outlet_id] + 2), int(self.geometry().y() + int(self.height()) - 8))
+        return QPoint(int(self.geometry().x() + self.midi_outs_x[midi_outlet_id] + 2),
+                      int(self.geometry().y() + int(self.height()) - 8))
 
     def getInletPos(self, inlet_id):
         return QPoint(int(self.geometry().x() + self.ins_x[inlet_id] + 2), int(self.geometry().y() + 4))
@@ -367,14 +376,17 @@ class SimpleWidget(QLabel):
             return -1
 
     def addDestination(self, event, widget, outlet_id, type="Audio"):
-        command = AddCable(widget=self, x=self.geometry().x() + event.position().x(), y=self.geometry().y() + event.position().y(), widget_out=widget, outlet_id=outlet_id, type=type)
+        command = AddCable(widget=self, x=self.geometry().x() + event.position().x(),
+                           y=self.geometry().y() + event.position().y(), widget_out=widget, outlet_id=outlet_id,
+                           type=type)
         self.get_undo_stack().push(command)
 
     def removeDestination(self, cable):
         self.destination_widgets.remove(cable)
 
     def addParameterDestination(self, event, widget, outlet_id):
-        cable = AudioCable(x=self.geometry().x() + event.position().x(), y=self.geometry().y() + event.position().y(), widget_out=widget, widget_out_id=outlet_id, parent=self.patch_area)
+        cable = AudioCable(x=self.geometry().x() + event.position().x(), y=self.geometry().y() + event.position().y(),
+                           widget_out=widget, widget_out_id=outlet_id, parent=self.patch_area)
         cable.show()
         self.patch_area.add_audio_cable(cable)
         self.destination_widgets.append(cable)
@@ -393,40 +405,47 @@ class SimpleWidget(QLabel):
                     return i
         else:
             for i in range(self.n_in):
-                if QRect(int(self.ins_x[i]), 2, 10, 10).contains(QPoint(int(event.position().x()), int(event.position().y()))):
+                if QRect(int(self.ins_x[i]), 2, 10, 10).contains(
+                        QPoint(int(event.position().x()), int(event.position().y()))):
                     return i
         return -1
 
     def checkMIDIInletPressed(self, event, subtractGlobalPos=False):
         if subtractGlobalPos:
             for i in range(self.n_midi_in):
-                if QRect(int(self.midi_ins_x[i]), 2, 10, 10).contains(QPoint(int(event.position().x() - self.x()), int(event.position().y() - self.y()))):
+                if QRect(int(self.midi_ins_x[i]), 2, 10, 10).contains(
+                        QPoint(int(event.position().x() - self.x()), int(event.position().y() - self.y()))):
                     return i
         else:
             for i in range(self.n_midi_in):
-                if QRect(int(self.midi_ins_x[i]), 2, 10, 10).contains(QPoint(int(event.position().x()), int(event.position().y()))):
+                if QRect(int(self.midi_ins_x[i]), 2, 10, 10).contains(
+                        QPoint(int(event.position().x()), int(event.position().y()))):
                     return i
         return -1
 
     def checkOutletPressed(self, event, subtractGlobalPos=False):
         if subtractGlobalPos:
             for i in range(self.n_out):
-                if QRect(int(self.outs_x[i]), int(self.height()) - 12, 10, 10).contains(int(event.position().x() - self.x()), int(event.position().y() - self.y())):
+                if QRect(int(self.outs_x[i]), int(self.height()) - 12, 10, 10).contains(
+                        int(event.position().x() - self.x()), int(event.position().y() - self.y())):
                     return i
         else:
             for i in range(self.n_out):
-                if QRect(int(self.outs_x[i]), int(self.height()) - 12, 10, 10).contains(int(event.position().x()), int(event.position().y())):
+                if QRect(int(self.outs_x[i]), int(self.height()) - 12, 10, 10).contains(int(event.position().x()),
+                                                                                        int(event.position().y())):
                     return i
         return -1
 
     def checkMIDIOutletPressed(self, event, subtractGlobalPos=False):
         if subtractGlobalPos:
             for i in range(self.n_midi_out):
-                if QRect(int(self.midi_outs_x[i]), int(self.height()) - 12, 10, 10).contains(int(event.position().x() - self.x()), int(event.position().y() - self.y())):
+                if QRect(int(self.midi_outs_x[i]), int(self.height()) - 12, 10, 10).contains(
+                        int(event.position().x() - self.x()), int(event.position().y() - self.y())):
                     return i
         else:
             for i in range(self.n_midi_out):
-                if QRect(int(self.midi_outs_x[i]), int(self.height()) - 12, 10, 10).contains(int(event.position().x()), int(event.position().y())):
+                if QRect(int(self.midi_outs_x[i]), int(self.height()) - 12, 10, 10).contains(int(event.position().x()),
+                                                                                             int(event.position().y())):
                     return i
         return -1
 
@@ -436,7 +455,8 @@ class SimpleWidget(QLabel):
                 param = self.synth_args[key]
                 if param["type"] == "audio":
                     param_y_center = self.synth_args_gui[key].y() + int(self.synth_args_gui[key].height() / 2)
-                    if QRectF(0, param_y_center - 4, 7, 7).contains(int(event.position().x() - self.x()), int(event.position().y() - self.y())):
+                    if QRectF(0, param_y_center - 4, 7, 7).contains(int(event.position().x() - self.x()),
+                                                                    int(event.position().y() - self.y())):
                         return key
         else:
             if type(self.synth_args) == dict:
@@ -444,15 +464,18 @@ class SimpleWidget(QLabel):
                     param = self.synth_args[key]
                     if param["type"] == "audio":
                         param_y_center = self.synth_args_gui[key].y() + int(self.synth_args_gui[key].height() / 2)
-                        if QRectF(0, param_y_center - 4, 7, 7).contains(int(event.position().x()), int(event.position().y())):
+                        if QRectF(0, param_y_center - 4, 7, 7).contains(int(event.position().x()),
+                                                                        int(event.position().y())):
                             return key
         return -1
 
     def calcInletOutletPos(self):
         self.ins_x = [(x + 1) * self.width() / ((self.n_in + self.n_midi_in) + 1) for x in range(self.n_in)]
-        self.midi_ins_x = [(x + self.n_in + 1) * self.width() / ((self.n_in + self.n_midi_in) + 1) for x in range(self.n_midi_in)]
+        self.midi_ins_x = [(x + self.n_in + 1) * self.width() / ((self.n_in + self.n_midi_in) + 1) for x in
+                           range(self.n_midi_in)]
         self.outs_x = [(x + 1) * self.width() / ((self.n_out + self.n_midi_out) + 1) for x in range(self.n_out)]
-        self.midi_outs_x = [(x + self.n_out + 1) * self.width() / ((self.n_out + self.n_midi_out) + 1) for x in range(self.n_midi_out)]
+        self.midi_outs_x = [(x + self.n_out + 1) * self.width() / ((self.n_out + self.n_midi_out) + 1) for x in
+                            range(self.n_midi_out)]
         self.params_x = [(x + 1) * self.height() / (self.n_param + 1) for x in range(self.n_param)]
 
     def checkLowerRightCorner(self, event, subtractGlobalPos=False):
@@ -471,12 +494,13 @@ class SimpleWidget(QLabel):
                 return False
 
     def checkDeleteCrossPressed(self, event, subtractGlobalPos=False):
-        rect = QRectF(self.width() - (self.delete_cross_rect[0] + 20), self.delete_cross_rect[1], self.width() - (self.delete_cross_rect[2] + 20), self.delete_cross_rect[3])
+        rect = QRectF(self.width() - (self.delete_cross_rect[0] + 20), self.delete_cross_rect[1],
+                      self.width() - (self.delete_cross_rect[2] + 20), self.delete_cross_rect[3])
         point = QPointF(event.position().x(), event.position().y())
         return rect.contains(point)
 
     def mousePressEvent(self, event):
-        print("Clicking on widget:", self.getUUID())
+        # print("Clicking on widget:", self.getUUID())
         # Show Settings in SideBar
         self.settings_sidebar.inspect_widget(self)
         # Try to start a Cable
@@ -499,27 +523,28 @@ class SimpleWidget(QLabel):
         # Check if inlet is pressed with a SimpleCable ON to connect the cable
         if self.checkInletPressed(event, subtractGlobalPos) != -1:
             if self.patch_area.is_placing_cable():
-                print("Audio Inlet Pressed")
+                # print("Audio Inlet Pressed")
                 command = PlaceCable(self, self.checkInletPressed(event), "Audio")
                 self.get_undo_stack().push(command)
         # Check if outlet is pressed to add a SimpleCable
         if self.checkOutletPressed(event, subtractGlobalPos) != -1:
-            print("Audio Outlet Pressed")
+            # print("Audio Outlet Pressed")
             self.addDestination(event, self, self.checkOutletPressed(event), type="Audio")
             self.patch_area.lower_cables()
             event.accept()
             return
         # TODO: Check if MIDI inlet is pressed with a MIDICable ON to connect the cable
         if self.checkMIDIInletPressed(event, subtractGlobalPos) != -1:
-            print("MIDI Inlet Pressed")
+            # print("MIDI Inlet Pressed")
             if self.patch_area.is_placing_cable():
                 # command = PlaceCable(self.patch_area, self.checkMIDIInletPressed(event), "MIDI")
                 command = PlaceCable(self, self.checkMIDIInletPressed(event), "MIDI")
                 self.get_undo_stack().push(command)
         # TODO: Check if MIDI outlet is pressed to add a MIDICable
         if self.checkMIDIOutletPressed(event, subtractGlobalPos) != -1:
-            print("MIDI Outlet Pressed")
-            self.addDestination(event, self, self.checkMIDIOutletPressed(event) + self.n_out, type="MIDI")  # TODO: check " + self.n_out"
+            # print("MIDI Outlet Pressed")
+            self.addDestination(event, self, self.checkMIDIOutletPressed(event) + self.n_out,
+                                type="MIDI")  # TODO: check " + self.n_out"
             self.patch_area.lower_cables()
             event.accept()
             return
@@ -560,7 +585,9 @@ class SimpleWidget(QLabel):
             pos = QCursor.pos()
             rect = self.geometry()
             diff = QPointF(pos.x() - self.begin_point.x(), pos.y() - self.begin_point.y())
-            self.setGeometry(min(max(0, int(rect.x() + diff.x())), self.patch_area.width() - self.width()), min(max(0, int(rect.y() + diff.y())), self.patch_area.height() - self.height()), self.width(), self.height())
+            self.setGeometry(min(max(0, int(rect.x() + diff.x())), self.patch_area.width() - self.width()),
+                             min(max(0, int(rect.y() + diff.y())), self.patch_area.height() - self.height()),
+                             self.width(), self.height())
             self.begin_point = QCursor.pos()
             self.patch_area.redraw_cables()
 
@@ -654,7 +681,8 @@ class SimpleWidget(QLabel):
                 height = self.xlet_size[1]
                 self.inlet_svg["Audio"].paint(painter, int(x - int(width / 2)), 0, width, height)
                 if self.type == "SubPatch":
-                    if QRect(int(x - int(width / 2)), 0, width, height).contains(int(self.mouse_position.x()), int(self.mouse_position.y())):
+                    if QRect(int(x - int(width / 2)), 0, width, height).contains(int(self.mouse_position.x()),
+                                                                                 int(self.mouse_position.y())):
                         self.draw_tooltip(painter, self.in_names[xid], QPoint(int(x + width - int(width / 2)), height))
         # MIDI Inlets
         pen.setColor(self.midi_inlet_color)
@@ -664,7 +692,8 @@ class SimpleWidget(QLabel):
                 width = self.xlet_size[0]
                 height = self.xlet_size[1]
                 self.inlet_svg["MIDI"].paint(painter, int(x - int(width / 2)), 0, width, height)
-                if QRect(int(x - int(width / 2)), 0, width, height).contains(int(self.mouse_position.x()), int(self.mouse_position.y())):
+                if QRect(int(x - int(width / 2)), 0, width, height).contains(int(self.mouse_position.x()),
+                                                                             int(self.mouse_position.y())):
                     self.draw_tooltip(painter, "TODO: Add Tooltip", QPoint(int(x + width - int(width / 2)), height))
         # Audio Outlets
         pen.setColor(self.inlet_color)
@@ -675,8 +704,11 @@ class SimpleWidget(QLabel):
                 height = self.xlet_size[1]
                 self.outlet_svg["Audio"].paint(painter, int(x - int(width / 2)), self.height() - height, width, height)
                 if self.type == "SubPatch":
-                    if QRect(int(x - int(width / 2)), self.height() - height, width, height).contains(int(self.mouse_position.x()), int(self.mouse_position.y())):
-                        self.draw_tooltip(painter, self.out_names[xid], QPoint(int(x + width - int(width / 2)), self.height() - (height + 20)), below=False)
+                    if QRect(int(x - int(width / 2)), self.height() - height, width, height).contains(
+                            int(self.mouse_position.x()), int(self.mouse_position.y())):
+                        self.draw_tooltip(painter, self.out_names[xid],
+                                          QPoint(int(x + width - int(width / 2)), self.height() - (height + 20)),
+                                          below=False)
         # MIDI Outlets
         pen.setColor(self.midi_inlet_color)
         painter.setPen(pen)
@@ -685,8 +717,11 @@ class SimpleWidget(QLabel):
                 width = self.xlet_size[0]
                 height = self.xlet_size[1]
                 self.outlet_svg["MIDI"].paint(painter, int(x - int(width / 2)), self.height() - height, width, height)
-                if QRect(int(x - int(width / 2)), self.height() - height, width, height).contains(int(self.mouse_position.x()), int(self.mouse_position.y())):
-                    self.draw_tooltip(painter, "TODO: Add Tooltip", QPoint(int(x + width - int(width / 2)), self.height() - (height + 20)), below=False)
+                if QRect(int(x - int(width / 2)), self.height() - height, width, height).contains(
+                        int(self.mouse_position.x()), int(self.mouse_position.y())):
+                    self.draw_tooltip(painter, "TODO: Add Tooltip",
+                                      QPoint(int(x + width - int(width / 2)), self.height() - (height + 20)),
+                                      below=False)
         # PARAMETERS
         if type(self.synth_args) == dict:
             if len(self.synth_args.keys()) > 0:
@@ -699,7 +734,8 @@ class SimpleWidget(QLabel):
                         painter.setPen(pen)
                         width = self.xlet_size[0]
                         height = self.xlet_size[1]
-                        self.param_svg["Audio"].paint(painter, -int(width / 4), param_y_center - int(height / 2), width, height)
+                        self.param_svg["Audio"].paint(painter, -int(width / 4), param_y_center - int(height / 2), width,
+                                                      height)
                     # se il parametro non è audio, allora non fare nulla
                     else:
                         pass
@@ -732,7 +768,8 @@ class SimpleWidget(QLabel):
                 menu = QMenu()
                 for key2 in self.patch.patch_buffers.getBuffers().keys():
                     buf = self.patch.patch_buffers.getBuffers()[key2]
-                    menu.addAction(f"{buf['bufnum']}: {buf['name']} - dur: {buf['duration']} chans: {buf['channels']}", lambda j=key, k=key2: self.patch_buffer_param_change(j, k))
+                    menu.addAction(f"{buf['bufnum']}: {buf['name']} - dur: {buf['duration']} chans: {buf['channels']}",
+                                   lambda j=key, k=key2: self.patch_buffer_param_change(j, k))
                 param_val.setMenu(menu)
                 param_val.setObjectName("widget-param")
                 param_val.setText("Select a PatchBuffer")
@@ -782,7 +819,8 @@ class SimpleWidget(QLabel):
 
 
 class AudioWidget(SimpleWidget):
-    def __init__(self, server=None, parent=None, n_in=2, n_out=5, synth_name="default", synth_args=None, uuid=None, name="", active=True, target_node=0, **kwargs):
+    def __init__(self, server=None, parent=None, n_in=2, n_out=5, synth_name="default", synth_args=None, uuid=None,
+                 name="", active=True, target_node=0, **kwargs):
         super().__init__(parent, n_in, n_out)
         self.type = "Audio"
         self.setObjectName(self.type)
@@ -895,8 +933,9 @@ class AudioWidget(SimpleWidget):
         for arg in self.synth_args.keys():
             if self.synth_args[arg]["type"] == "patch_buffer":
                 buf = self.patch.patch_buffers.getBuffers()[str(self.synth_args[arg]["val"])]
-                print("self.synth_args[arg]['val']", str(self.synth_args[arg]["val"]))
-                self.synth_args_gui[arg].setText(f"{buf['bufnum']}: {buf['name']} - dur: {buf['duration']} chans: {buf['channels']}")
+                # print("self.synth_args[arg]['val']", str(self.synth_args[arg]["val"]))
+                self.synth_args_gui[arg].setText(
+                    f"{buf['bufnum']}: {buf['name']} - dur: {buf['duration']} chans: {buf['channels']}")
             else:
                 if self.synth_args[arg]["type"] != "AmbisonicsKernel":
                     self.synth_args_gui[arg].setText(str(self.synth_args[arg]["val"]))
@@ -940,11 +979,13 @@ class AudioWidget(SimpleWidget):
                 if self.synth_args[arg]["type"] == "audio":
                     if int(self.synth_args[arg]["bus"]) > 0:
                         self.synth.map(arg, self.synth_args[arg]["bus"])
-                        self.synth.set(arg.replace("a_", "selector_"), 1)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Lag al Bus mero
+                        self.synth.set(arg.replace("a_", "selector_"),
+                                       1)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Lag al Bus mero
                     else:
                         try:
                             self.synth.set(arg, float(self.synth_args[arg]["val"]))
-                            self.synth.set(arg.replace("a_", "selector_"), 0)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Bus al Lag
+                            self.synth.set(arg.replace("a_", "selector_"),
+                                           0)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Bus al Lag
                         except:
                             c_print("red", f"ERROR: Widget resetSynthArgs (Bad text: {self.synth_args[arg]['val']})")
                 # Buffer Parameter
@@ -959,9 +1000,9 @@ class AudioWidget(SimpleWidget):
                 elif self.synth_args[arg]["type"] == "patch_buffer":
                     val = self.synth_args[arg]["val"]
                     if not str(val) in self.patch.patch_buffers.getBuffers().keys():
-                        c_print("red", f"fatal: PatchBuffer{val} not in list!")
+                        c_print("red", f"Fatal: PatchBuffer{val} not in list!")
                     else:
-                        c_print("green", f"setting buf to: {val}")
+                        # c_print("green", f"setting buf to: {val}")
                         self.synth.set(arg, int(val))
                 # AmbisonicsKernel Parameter
                 elif self.synth_args[arg]["type"] == "AmbisonicsKernel":
@@ -987,7 +1028,7 @@ class AudioWidget(SimpleWidget):
 
     def moveBefore(self, node):
         if self.synth is None:
-            print("No synth associated with graphic class: aborting...")
+            # print("No synth associated with graphic class: aborting...")
             pass
         else:
             # Set synth before other node (if AudioOut, wew would expect it to be at the bottom of the DSP chain)
@@ -995,7 +1036,7 @@ class AudioWidget(SimpleWidget):
 
     def moveAfter(self, node):
         if self.synth is None:
-            print("No synth associated with graphic class: aborting...")
+            # print("No synth associated with graphic class: aborting...")
             pass
         else:
             # Set synth after other node (if AudioOut, wew would expect it to be at the bottom of the DSP chain)
@@ -1005,14 +1046,14 @@ class AudioWidget(SimpleWidget):
         self.input_channels[index] = value
         # self.synth.set("in_ch_{}".format(index), value)
         self.resetSynthArgs()
-        print("Input Channel {} changed to {}".format(index, self.input_channels[index]))
+        # print("Input Channel {} changed to {}".format(index, self.input_channels[index]))
 
     def change_param(self, key, chan):
         synth_args = deepcopy(self.synth_args)
         synth_args[key]["bus"] = chan
         self.synth_args = deepcopy(synth_args)
         self.resetSynthArgs()
-        print("Param {} changed to bus {}".format(key, chan))
+        # print("Param {} changed to bus {}".format(key, chan))
 
     def set_param_val(self, key, value):
         synth_args = deepcopy(self.synth_args)
@@ -1040,7 +1081,7 @@ class AudioWidget(SimpleWidget):
         for i in range(self.n_out):
             self.args.append("out_ch_{}".format(i))
             d["out_ch_{}".format(i)] = self.bus.getChan(i)
-        c_print("green", f"AudioWidget Saving state: {d}")
+        # c_print("green", f"AudioWidget Saving state: {d}")
         return d
 
     def __setstate__(self, state):
@@ -1051,15 +1092,15 @@ class AudioWidget(SimpleWidget):
             self.name = state["name"]
         # self.in_ch = state["in_ch"]
         self.setSettings(state["Settings"])
-        c_print("yellow", f'AudioWidget {self.name} ins: {state["Settings"]["Inputs"]}; outs: {state["Settings"]["Outputs"]} ')
+        # c_print("yellow",f'AudioWidget {self.name} ins: {state["Settings"]["Inputs"]}; outs: {state["Settings"]["Outputs"]} ')
         self.setGeometry(state["x"], state["y"], state["width"], state["height"])
         self.freeSynth()
-        c_print("yellow", f'{[state["out_ch_{}".format(i)] for i in range(self.n_out)]}')
+        # c_print("yellow", f'{[state["out_ch_{}".format(i)] for i in range(self.n_out)]}')
         self.bus = Bus(self.server, self.n_out, [state["out_ch_{}".format(i)] for i in range(self.n_out)])
         # TODO: check this line!
         self.resetSynthArgs()
         self.instantiateSynth()  # Qui instantiateSynth perchè non devo ricreare il Bus
-        c_print("green", f"AudioWidget Loading state: {state}")
+        # c_print("green", f"AudioWidget Loading state: {state}")
 
 
 class MIDIWidget(SimpleWidget):
@@ -1078,10 +1119,10 @@ class MIDIWidget(SimpleWidget):
     def propagateRTCC(self, num, val):
         for widget in self.midi_destinations:
             if hasattr(widget, "processRTCC"):
-                print("calling processRTCC")
+                # print("calling processRTCC")
                 widget.processRTCC(num, val)
             if hasattr(widget, "propagateRTCC"):
-                print("calling propagateRTCC")
+                # print("calling propagateRTCC")
                 widget.propagateRTCC(num, val)
 
     def propagateRTProgramChange(self, num):
@@ -1093,6 +1134,9 @@ class MIDIWidget(SimpleWidget):
                 widget.processRTMIDINote(note, velocity)
             if hasattr(widget, "propagateRTMIDINote"):
                 widget.propagateRTMIDINote(note, velocity)
+
+    def processNote(self, note):
+        self.propagateMIDINote(note)
 
     def propagateMIDINote(self, note):
         for widget in self.midi_destinations:
@@ -1136,7 +1180,8 @@ class MIDIWidget(SimpleWidget):
 
 
 class AudioMIDIWidget(SimpleWidget):
-    def __init__(self, server=None, clock=None, harmony_manager=None, parent=None, uuid=None, n_audio_in=0, n_audio_out=0, n_midi_in=0, n_midi_out=0, synth_name="", synth_args=None):
+    def __init__(self, server=None, clock=None, harmony_manager=None, parent=None, uuid=None, n_audio_in=0,
+                 n_audio_out=0, n_midi_in=0, n_midi_out=0, synth_name="", synth_args=None):
         super().__init__(parent=parent, n_in=n_audio_in, n_out=n_audio_out, n_midi_in=n_midi_in, n_midi_out=n_midi_out)
         if synth_args is None:
             synth_args = {}
@@ -1170,8 +1215,7 @@ class AudioMIDIWidget(SimpleWidget):
 
         self.initUI()
         self.initArgs()
-        print("output channels:", self.output_channels, "bus first channel:",
-              [self.bus.getChan(i) for i in range(len(self.output_channels))])
+        # print("output channels:", self.output_channels, "bus first channel:", [self.bus.getChan(i) for i in range(len(self.output_channels))])
 
     def freeSynth(self):
         try:
@@ -1235,18 +1279,19 @@ class AudioMIDIWidget(SimpleWidget):
             self.group.free()
         except:
             pass
-        self.group = Group(self.server, self.uuid, "head", 0)  # TODO: check if inside a subpatch, targetID should not be 0!
+        self.group = Group(self.server, self.uuid, "head",
+                           0)  # TODO: check if inside a subpatch, targetID should not be 0!
 
     def processNote(self, note):
         # note.describe()
-        thread = Thread(target=self.noteThread, args=(note, ))
+        thread = Thread(target=self.noteThread, args=(note,))
         thread.start()
 
     def processRTCC(self, num, val):
         pass
 
     def processRTMIDINote(self, note, velocity):
-        print(f"Processing RT MIDI Note {note}")
+        # print(f"Processing RT MIDI Note {note}")
         if note in MIDI_NOTE_NAMES.keys():
             note = MIDI_NOTE_NAMES[note]
         note = Note(note, velocity)
@@ -1258,7 +1303,7 @@ class AudioMIDIWidget(SimpleWidget):
         params.append(frequency)
         params.append("amp")
         params.append(amplitude)
-        print(f"params: {params}")
+        # print(f"params: {params}")
         if velocity > 0:  # Note On
             try:
                 self.note_synths[str(note.getNote())].set("gate", 0)  # release synth if any
@@ -1272,9 +1317,10 @@ class AudioMIDIWidget(SimpleWidget):
                     if int(self.synth_args[arg]["bus"]) > 0:
                         for knote in self.note_synths.keys():
                             synth = self.note_synths[knote]
-                            if type(synth) == Synth:
+                            # if type(synth) == Synth:
+                            if isinstance(synth, Synth):
                                 synth.map(arg, self.synth_args[arg]["bus"])
-        else:
+        else:  # Note Off
             try:
                 self.note_synths[str(note.getNote())].set("gate", 0)  # release synth if any
                 self.note_synths[str(note.getNote())] = None
@@ -1285,30 +1331,35 @@ class AudioMIDIWidget(SimpleWidget):
         params = self.computeSynthArgs()
         amplitude = note.getVelocity() / 127.0
         frequency = note.getFrequency()
+        duration = 60 * note.getDuration() / (self.clock.getBPM() * PPQN)
         params.append("freq")
         params.append(frequency)
         params.append("amp")
         params.append(amplitude)
+        params.append("a_dur")
+        params.append(duration)
         if self.note_synths[str(note.getNote())] is not None:
             self.note_synths[str(note.getNote())].set("gate", 0)  # release synth if any
             self.note_synths[str(note.getNote())] = None
-        self.note_synths[str(note.getNote())] = Synth(self.server, self.synth_name, node=None, args=params, addAction="head", targetID=self.group.getNodeID())
+        self.note_synths[str(note.getNote())] = Synth(self.server, self.synth_name, node=None, args=params,
+                                                      addAction="head", targetID=self.group.getNodeID())
         for arg in self.synth_args.keys():
             if self.synth_args[arg]["type"] == "audio":
                 if int(self.synth_args[arg]["bus"]) > 0:
                     self.note_synths[str(note.getNote())].map(arg, self.synth_args[arg]["bus"])
-        time.sleep(60 * note.getDuration() / (note.getBPM() * PPQN))
+        # time.sleep(60 * note.getDuration() / (note.getBPM() * PPQN))
+        time.sleep(duration)
         if self.note_synths[str(note.getNote())] is not None:
             self.note_synths[str(note.getNote())].set("gate", 0)
             self.note_synths[str(note.getNote())] = None
 
     def change_in_ch(self, index, value):
         self.input_channels[index] = value
-        print("Input Channel {} changed to {}".format(index, self.input_channels[index]))
+        # print("Input Channel {} changed to {}".format(index, self.input_channels[index]))
 
     def change_param(self, key, chan):
         self.synth_args[key]["bus"] = chan
-        print("Param {} changed to bus {}".format(key, chan))
+        # print("Param {} changed to bus {}".format(key, chan))
 
     def set_param(self, key, val):
         self.synth_args[key]["val"] = val
@@ -1329,7 +1380,7 @@ class AudioMIDIWidget(SimpleWidget):
 
     def setSettings(self, settings):
         self.synth_args = settings["Parameters"]
-        print("Widget Settings:", settings)
+        # print("Widget Settings:", settings)
         # Inputs
         for index, key in enumerate(settings["Inputs"]):
             self.input_channels[index] = settings["Inputs"][key]
@@ -1363,7 +1414,7 @@ class AudioMIDIWidget(SimpleWidget):
         for i in range(self.n_out):
             self.args.append("out_ch_{}".format(i))
             d["out_ch_{}".format(i)] = self.bus.getChan(i)
-        c_print("green", f"AudioMIDIWidget Saving state: {d}")
+        # c_print("green", f"AudioMIDIWidget Saving state: {d}")
         return d
 
     def __setstate__(self, state):
@@ -1378,7 +1429,7 @@ class AudioMIDIWidget(SimpleWidget):
         self.bus = Bus(self.server, self.n_out, [state["out_ch_{}".format(i)] for i in range(self.n_out)])
         self.resetNoteSynths()
         # print("output channels:", self.output_channels, "bus first channel:", [self.bus.getChan(i) for i in range(len(self.output_channels))])
-        c_print("green", f"AudioMIDIWidget Loading state: {state}")
+        # c_print("green", f"AudioMIDIWidget Loading state: {state}")
 
 
 class SubPatchInstanceWidget(SimpleWidget):
@@ -1423,11 +1474,11 @@ class SubPatchInstanceWidget(SimpleWidget):
     def reinitUI(self):
         self.n_in, self.n_out = self.subpatch.getIO()
         self.in_names, self.out_names = self.subpatch.getIONames()
-        print(f"SUBPATCH INSTANCE's self.n_in, self.n_out are now:{(self.n_in, self.n_out)}")
+        # print(f"SUBPATCH INSTANCE's self.n_in, self.n_out are now:{(self.n_in, self.n_out)}")
         self.initUI()
 
     def change_in_ch(self, index, value):
-        print("self.input_channels, index, value", self.input_channels, index, value)
+        # print("self.input_channels, index, value", self.input_channels, index, value)
         self.input_channels[index] = value
 
     def getSettings(self):
@@ -1461,7 +1512,7 @@ class SubPatchInstanceWidget(SimpleWidget):
         for i in range(self.n_out):
             self.args.append("out_ch_{}".format(i))
             d["out_ch_{}".format(i)] = self.bus.getChan(i)
-        print("AudioWidget Saving state:", d)
+        # print("AudioWidget Saving state:", d)
         return d
 
     def __setstate__(self, state):
@@ -1481,8 +1532,10 @@ class SubPatchInstanceWidget(SimpleWidget):
         # self.freeSynth()
         self.bus = Bus(self.server, self.n_out, [state["out_ch_{}".format(i)] for i in range(self.n_out)])
         self.reinitUI()
-        c_print("red", f'SubPatchInstanceWidget SETTING in_ch_ {[state["in_ch_{}".format(i)] for i in range(self.n_in)]}; out_ch_ {[state["out_ch_{}".format(i)] for i in range(self.n_out)]}')
-        c_print("red", f'SubPatchInstanceWidget SETTING ins: {self.input_channels} out of {[state["in_ch_{}".format(i)] for i in range(self.n_in)]}; outs: {self.output_channels} out of {[state["out_ch_{}".format(i)] for i in range(self.n_out)]}')
+        c_print("red",
+                f'SubPatchInstanceWidget SETTING in_ch_ {[state["in_ch_{}".format(i)] for i in range(self.n_in)]}; out_ch_ {[state["out_ch_{}".format(i)] for i in range(self.n_out)]}')
+        c_print("red",
+                f'SubPatchInstanceWidget SETTING ins: {self.input_channels} out of {[state["in_ch_{}".format(i)] for i in range(self.n_in)]}; outs: {self.output_channels} out of {[state["out_ch_{}".format(i)] for i in range(self.n_out)]}')
 
 
 class SimpleCable(QWidget):
@@ -1599,7 +1652,9 @@ class SimpleCable(QWidget):
         image = pixmap.scaled(self.patch_area.width(), self.patch_area.height()).toImage()
         color = image.pixelColor(QPoint(int(event.position().x()), int(event.position().y())))
         # return rect.containsPoint(QPointF(event.position().x(), event.position().y()), Qt.FillRule.WindingFill)
-        print("Cable click at", QPoint(int(event.position().x()), int(event.position().y())), "image size", (image.width(), image.height()), "start-end points", start_point, end_point, "color sum:", (color.red() + color.green() + color.blue()))
+        # print("Cable click at", QPoint(int(event.position().x()), int(event.position().y())), "image size",
+        #       (image.width(), image.height()), "start-end points", start_point, end_point, "color sum:",
+        #       (color.red() + color.green() + color.blue()))
         if (color.red() + color.green() + color.blue()) == 0:
             return True
         else:
@@ -1633,7 +1688,8 @@ class SimpleCable(QWidget):
         # painter.drawLine(start_point.x(), start_point.y(), end_point.x(), end_point.y())
         path.moveTo(QPointF(start_point.x(), start_point.y()))
         # Qui per curva cubica
-        path.cubicTo(start_point.x(), (start_point.y() + end_point.y()) / 2, end_point.x(), (start_point.y() + end_point.y()) / 2, end_point.x(), end_point.y())
+        path.cubicTo(start_point.x(), (start_point.y() + end_point.y()) / 2, end_point.x(),
+                     (start_point.y() + end_point.y()) / 2, end_point.x(), end_point.y())
         painter.drawPath(path)
         if end_point.y() >= start_point.y():
             painter.translate(end_point.x(), end_point.y())
@@ -1669,13 +1725,15 @@ class AudioCable(SimpleCable):
         if self.is_inside_subpatch:
             self.widget_out = widget_out
             self.widget_out_id = widget_out_id
-            self.widget_out_out = self.widget_out.subpatch.getSubPatchInstanceOutletWidget(self.widget_out.getUUID(), self.widget_out.out_names[self.widget_out_id])
+            self.widget_out_out = self.widget_out.subpatch.getSubPatchInstanceOutletWidget(self.widget_out.getUUID(),
+                                                                                           self.widget_out.out_names[
+                                                                                               self.widget_out_id])
             self.widget_out_out_id = 0
-            print("self.widget_out_out", self.widget_out_out, "self.widget_out_out_id", self.widget_out_out_id)
+            # print("self.widget_out_out", self.widget_out_out, "self.widget_out_out_id", self.widget_out_out_id)
         else:
             self.widget_out = widget_out
             self.widget_out_id = widget_out_id
-        print(f"Widget Out is {self.widget_out}; Its bus is: {self.widget_out.bus}")
+        # print(f"Widget Out is {self.widget_out}; Its bus is: {self.widget_out.bus}")
         self.pen_color = QColor(_6color_palette_01)
         self.bus = None
 
@@ -1702,24 +1760,28 @@ class AudioCable(SimpleCable):
         # if self.widget_out.bus is None:
         if self.is_inside_subpatch:
             bus = self.widget_out_out.bus if self.is_inside_subpatch else self.widget_out.bus
-            print("BUS IS:", bus, "self.widget_out.bus:", self.widget_out.bus, "; self.widget_out_out.bus:", self.widget_out_out.bus)
+            # print("BUS IS:", bus, "self.widget_out.bus:", self.widget_out.bus, "; self.widget_out_out.bus:", self.widget_out_out.bus)
         else:
             bus = self.widget_out.bus
 
         if bus is None:
             if type(self.widget_in_id) == str:
                 # self.widget_in.change_param(self.widget_in_id, self.bus.getChan(self.widget_out_id))
-                self.widget_in.change_param(self.widget_in_id, self.bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
+                self.widget_in.change_param(self.widget_in_id, self.bus.getChan(
+                    self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
             else:
                 # self.widget_in.change_in_ch(self.widget_in_id, self.bus.getChan(self.widget_out_id))
-                self.widget_in.change_in_ch(self.widget_in_id, self.bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
+                self.widget_in.change_in_ch(self.widget_in_id, self.bus.getChan(
+                    self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
         else:
             if type(self.widget_in_id) == str:
                 # self.widget_in.change_param(self.widget_in_id, self.widget_out.bus.getChan(self.widget_out_id))
-                self.widget_in.change_param(self.widget_in_id, bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
+                self.widget_in.change_param(self.widget_in_id, bus.getChan(
+                    self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
             else:
                 # self.widget_in.change_in_ch(self.widget_in_id, self.widget_out.bus.getChan(self.widget_out_id))
-                self.widget_in.change_in_ch(self.widget_in_id, bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
+                self.widget_in.change_in_ch(self.widget_in_id, bus.getChan(
+                    self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
         if hasattr(self.widget_in, "group"):
             self.widget_out.moveBefore(self.widget_in.group)
         elif hasattr(self.widget_in, "synth"):
@@ -1731,28 +1793,34 @@ class AudioCable(SimpleCable):
         # Widget In:  the widget that RECEIVES the INPUT
         # Widget Out: the widget that SENDS its OUTPUT
         # OUTPUTS pretrain Bus instances, and the INPUTS are connected to OUTPUT's Buses
-        self.widget_in_in = self.widget_in.subpatch.getSubPatchInstanceInletWidget(self.widget_in.getUUID(), self.widget_in.in_names[self.widget_in_id])
-        print("self.widget_in_in", self.widget_in_in.active, self.widget_in_in.getUUID())
+        self.widget_in_in = self.widget_in.subpatch.getSubPatchInstanceInletWidget(self.widget_in.getUUID(),
+                                                                                   self.widget_in.in_names[
+                                                                                       self.widget_in_id])
+        # print("self.widget_in_in", self.widget_in_in.active, self.widget_in_in.getUUID())
         if self.widget_out.bus is None:
-            print("connecting widget_in_in 0 to", self.bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
+            # print("connecting widget_in_in 0 to", self.bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
             # self.widget_in_in.change_in_ch(0, self.bus.getChan(self.widget_out_id))
-            self.widget_in_in.change_in_ch(0, self.bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
+            self.widget_in_in.change_in_ch(0, self.bus.getChan(
+                self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
         else:
-            print("connecting widget_in_in 0 to", self.widget_out.bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
+            # print("connecting widget_in_in 0 to", self.widget_out.bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
             # self.widget_in_in.change_in_ch(0, self.widget_out.bus.getChan(self.widget_out_id))
-            self.widget_in_in.change_in_ch(0, self.widget_out.bus.getChan(self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
+            self.widget_in_in.change_in_ch(0, self.widget_out.bus.getChan(
+                self.widget_out_out_id if self.is_inside_subpatch else self.widget_out_id))
         if hasattr(self.widget_in, "group"):
-            print("Moving group!")
+            # print("Moving group!")
             self.widget_out.moveBefore(self.widget_in.group)
         elif hasattr(self.widget_in, "synth"):
             self.widget_out.moveBefore(self.widget_in.synth)
-        print(f"widget_in_in in_ch_0 is now {self.widget_in_in.input_channels}")
+        # print(f"widget_in_in in_ch_0 is now {self.widget_in_in.input_channels}")
         self.patch_area.repatch_audio()
-        print(f"widget_in_in in_ch_0 is now {self.widget_in_in.input_channels}")
+        # print(f"widget_in_in in_ch_0 is now {self.widget_in_in.input_channels}")
         scsynth.dumpNodeTree(group=0, showArgs=True)
 
     def disconnectSubPatchWidgets(self):
-        self.widget_in_in = self.widget_in.subpatch.getSubPatchInstanceInletWidget(self.widget_in.getUUID(), self.widget_in.in_names[self.widget_in_id])
+        self.widget_in_in = self.widget_in.subpatch.getSubPatchInstanceInletWidget(self.widget_in.getUUID(),
+                                                                                   self.widget_in.in_names[
+                                                                                       self.widget_in_id])
         self.widget_in_in.synth.set(f"in_ch_0", scsynth.getDefaultInBus())
         settings = deepcopy(self.widget_in_in.getSettings())
         settings['Inputs'][f"in_ch_0"] = scsynth.getDefaultInBus()
@@ -1854,7 +1922,7 @@ class PatchBuffers(QWidget):
             name += "_1"
         if duration <= 0.0:
             duration = 0.01
-        print("duration", duration, type(duration), "server sample_rate", self.server.sample_rate, type(self.server.sample_rate))
+        # print("duration", duration, type(duration), "server sample_rate", self.server.sample_rate, type(self.server.sample_rate))
         numFrames = int(duration * self.server.sample_rate)
         self.buffers[str(bufnum)] = {
             "name": name,
@@ -1884,7 +1952,9 @@ class PatchBuffers(QWidget):
     def __setstate__(self, state):
         self.removeAllBuffers()
         for buf in state["buffers"]:
-            self.addBuffer(int(state["buffers"][buf]["bufnum"]), state["buffers"][buf]["name"], float(state["buffers"][buf]["duration"]), int(state["buffers"][buf]["channels"]))
+            self.addBuffer(int(state["buffers"][buf]["bufnum"]), state["buffers"][buf]["name"],
+                           float(state["buffers"][buf]["duration"]), int(state["buffers"][buf]["channels"]))
+
 
 class QFloatEdit(QLineEdit):
     def __init__(self, *__args):

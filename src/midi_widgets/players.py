@@ -15,7 +15,7 @@ class MIDIClipPlayer(MIDIWidget):
         self.folder = midi_folder
         self.midi_file_name = None
         self.midi_clip = None
-        self.midi_clip_player = classes.MIDIClipPlayer(midiclip=self.midi_clip, clock=self.clock.clock, server=self.server, loop=False)
+        self.midi_clip_player = classes.MIDIClipPlayer(midiclip=self.midi_clip, clock=self.clock.clock, widget=self, server=self.server, loop=False)
 
         # select midi file menu
         self.select_midi_clip_butt = QPushButton(text="Apri cartella ->")
@@ -94,6 +94,8 @@ class MIDIClipPlayer(MIDIWidget):
         self.reset_instr_menu()
 
     def process_tick(self, tick):
+        # if tick == 0:
+        #     c_print("green", f"Processing tick in MIDIClipPlayer(MIDIWidget) {self.uuid}")
         self.midi_clip_player.process_tick(tick)
 
     def setStartMeasure(self, value):
