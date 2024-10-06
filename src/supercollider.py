@@ -127,6 +127,7 @@ class SCSYNTH:
         self.busyBuffers = [0]
         self.busyAudioBusses = []
         self.bus_values = {}
+        self.trigreply_widgets = {}
         self.alloc_buffer_wait_event = ResettableEvent()
         self.atk_kernels = None
         self.is_alive_event = threading.Event()
@@ -135,7 +136,6 @@ class SCSYNTH:
         self.recording_buffer = -1
         self.recording_path = ""
         self.recording_synth = None
-
 
         conf = cp.ConfigParser()
         conf.read(CONFIG_PATH)  # config_path
@@ -180,7 +180,15 @@ class SCSYNTH:
         self.recording_header_format = RECORDING_HEADER_FORMAT
         self.recording_sample_format = RECORDING_SAMPLE_FORMAT
 
-    # self.connect()
+    def add_trigreply_widget(self, widget):
+        self.trigreply_widgets[str(widget.getUUID())] = widget
+
+    def remove_trigreply_widget(self, widget):
+        del self.trigreply_widgets[str(widget.getUUID())]
+
+    def trigreply_callback(self, *args):
+        # print("Trigreply callback", args)
+        self.trigreply_widgets[str(int(args[3]))].propagate_trig()
 
     ''' Get node order '''
 
@@ -304,6 +312,7 @@ class SCSYNTH:
         self.dispatcher.map("/c_set", self.bus_value_update_func)  # QUESTO SERVE NON SOLO PER PRINT!!!!!!!
         self.dispatcher.map("/done", self.manage_done)
         self.dispatcher.map("/b_info", self.manage_b_info)
+        self.dispatcher.map("/trigreply", self.trigreply_callback)
         self.scsynth_thread = Thread(target=self.start_server_in_thread_func, daemon=True)
         self.scsynth_thread.start()
         osc_startup()

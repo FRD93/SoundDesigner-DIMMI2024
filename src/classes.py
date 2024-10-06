@@ -2,6 +2,7 @@
 Documentazione delle varie classi
 """
 import mido
+from mido import MidiFile, MidiTrack, Message, MetaMessage
 import time
 from datetime import time as dtime
 import numpy as np
@@ -387,6 +388,29 @@ class Note:
         print("\tChord:", self.getChord())
         print("\tKey:", self.getKey())
 
+    def tokenize(self, encode_start_time=False, encode_velocity=False, encode_chord=False, encode_key=False):
+        # ATM, notes are described as "note_duration_velocity|chord"
+        note_name = list(MIDI_NOTE_NAMES.keys())[list(MIDI_NOTE_NAMES.values()).index(self.midi_note)]
+        velocity = str(self.velocity)
+        duration = str(self.duration)
+        start_tick = str(self.start_tick)
+        token = "" + note_name + "_" + duration  # Basic note token is expressed as "note_duration"
+        # if encode_start_time:  # TODO: start_time is maybe a  nonsense, remove it from arguments!
+        #     token += ("_" + str(start_tick))
+        if encode_velocity:
+            token += ("_" + velocity)
+        if encode_key:
+            token += ("_" + note2KeySig(self.getKey()))
+        if encode_chord:
+            if self.chord is not None:
+                if isinstance(self.chord, str):
+                    token += ("|" + self.chord)
+                elif isinstance(self.chord, Chord):
+                    token += ("|" + self.chord.getChord())
+            else:
+                token += "|NA"  # No chord found for note -> append "|NA"
+        return token
+
 
 class Chord:
     """
@@ -495,9 +519,7 @@ class MIDIClip:
             self.tempo = self.bpm / 60.
             self.ppqn = PPQN
             self.applyKeyChordsOnNotes()
-            self.length = self.get_eot_tick(midi_file=self.midi)
-            if self.length is None:
-                self.length = int(max([note.getDuration() + note.getStartTick() for note in self.notes]))
+            self.length = int(max([note.getDuration() + note.getStartTick() for note in self.notes]))
         print("MIDI File num ticks:", self.length)
         if transpose_to_C:
             self.transpose(-1 * self.key)
@@ -641,6 +663,110 @@ class MIDIClip:
         print("\t\t* * NOTES * *")
         for note in self.notes:
             note.describe()
+
+    def tokenize(self, max_notes=200, encode_start_time=False, encode_velocity=False, encode_chord=False,
+                 encode_key=False):
+        if len(self.notes) > max_notes:
+            tokens = []
+            for i in range(0, len(self.notes), max_notes // 3):
+                token = ""
+                last_onset = 0
+                for j in range(max_notes):
+                    if (i + j) < len(self.notes):
+                        self.notes[i + j].setStartTick(5 * round(self.notes[i + j].getStartTick() / 5))
+                        if last_onset != self.notes[i + j].getStartTick():
+                            token += (self.notes[i + j].tokenize(encode_start_time=encode_start_time,
+                                                                 encode_velocity=encode_velocity,
+                                                                 encode_chord=encode_chord,
+                                                                 encode_key=encode_key) + ", ")
+                        else:
+                            token = token[
+                                    :-2] + ";"  # Encode chords as a spaced sequence of tokens (without ",", e.g.: "C3_60 G4_60, E3_120")
+                            token += (self.notes[i + j].tokenize(encode_start_time=encode_start_time,
+                                                                 encode_velocity=encode_velocity,
+                                                                 encode_chord=encode_chord,
+                                                                 encode_key=encode_key) + ", ")
+                        last_onset = self.notes[i + j].getStartTick()
+                tokens.append(token[:-2])
+        else:
+            tokens = ""
+            last_onset = 0
+            for note in self.notes:
+                note.setStartTick(5 * round(note.getStartTick() / 5))
+                if last_onset != note.getStartTick():
+                    tokens += (note.tokenize(encode_start_time=encode_start_time, encode_velocity=encode_velocity,
+                                             encode_chord=encode_chord, encode_key=encode_key) + ", ")
+                else:
+                    tokens = tokens[
+                             :-2] + ";"  # Encode chords as a spaced sequence of tokens (without ",", e.g.: "C3_60 G4_60, E3_120")
+                    tokens += (note.tokenize(encode_start_time=encode_start_time, encode_velocity=encode_velocity,
+                                             encode_chord=encode_chord, encode_key=encode_key) + ", ")
+                last_onset = note.getStartTick()
+            tokens = tokens[:-2]
+        return tokens
+
+    def load_from_tokens(self, tokens, reset_chords=True, encode_velocity=False):
+        if isinstance(tokens, str):
+            tokens = tokens.split(", ")
+        self.notes = []
+        if reset_chords:
+            self.chords = []
+            self.key = 0
+        current_tick = 0
+        for token in tokens:
+            if len(token) > 3:
+                if len(token.split(";")) > 1:
+                    min_dur = 1e6
+                    for tt in token.split(";"):
+                        if len(tt) > 3:
+                            tt = tt.split("|")[0]
+                            print("tt", tt)
+                            tt = tt.split("_")
+                            midinote = noteToMIDI(tt[0])
+                            duration = int(tt[1])
+                            if encode_velocity and len(tt) > 2:
+                                velocity = int(tt[2])
+                            else:
+                                velocity = 100
+                            min_dur = min(min_dur, duration)
+                            self.notes.append(Note(midinote, velocity, current_tick, duration))
+                    current_tick += min_dur
+                else:
+                    token = token.split("|")[0]
+                    print("token", token)
+                    token = token.split("_")
+                    midinote = noteToMIDI(token[0])
+                    duration = int(token[1])
+                    if encode_velocity and len(token) > 2:
+                        velocity = int(token[2])
+                    else:
+                        velocity = 100
+                    self.notes.append(Note(midinote, velocity, current_tick, duration))
+                    current_tick += duration
+
+    def save(self, filepath, ignore_first_bar=False):
+        mid = MidiFile(ticks_per_beat=PPQN)
+        track = MidiTrack()
+        track.append(MetaMessage('set_tempo', tempo=mido.bpm2tempo(120)))
+        mid.tracks.append(track)
+        messages = []
+        for note in self.notes:
+            start_tick = note.getStartTick()
+            duration = note.getDuration()
+            messages.append(['note_on', note.getNote(), note.getVelocity(), start_tick])
+            messages.append(['note_off', note.getNote(), note.getVelocity(), start_tick + duration])
+        messages = sorted(messages, key=lambda msg: msg[3])
+        last_time = 0
+        for m in messages:
+            if ignore_first_bar and m[3] < (PPQN * 4):
+                pass
+            else:
+                start_time = m[3]
+                delta_time = start_time - last_time
+                track.append(Message(m[0], note=m[1], velocity=m[2], time=delta_time))
+                last_time = start_time
+        mid.save(filepath)
+        print(f'MIDI file saved as {filepath}')
 
 
 class MIDIClipPlayer:
@@ -865,7 +991,11 @@ class TempoClock(threading.Event):
                     envelope = wc.envelopes[env_key]
                     if envelope.isEnabled():
                         val = envelope.computeValueFromTick(self.tick_counter, self.timeline.npoints)
-                        audio_midi_widget.set_param(env_key, val)
+                        if isinstance(audio_midi_widget.synth, Synth):
+                            # print("AudioMIDIWidget:", audio_midi_widget.getUUID(), val)
+                            audio_midi_widget.synth.set(env_key, val)
+                        else:
+                            audio_midi_widget.set_param(env_key, val)
             # Send current tick to midi widgets
             for midi_widget in self.patch.midi_widgets:
                 midi_widget.process_tick(self.tick_counter)

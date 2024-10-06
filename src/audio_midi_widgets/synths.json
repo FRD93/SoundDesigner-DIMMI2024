@@ -1,5 +1,5 @@
 {
-    "MyFirstSynth": {
+    "Simple Instrument": {
         "synth_name": "FM1",
         "n_audio_in": 0,
         "n_audio_out": 2,
@@ -32,7 +32,7 @@
             }
         }
     },
-    "Granular FM": {
+    "FM Grains": {
         "synth_name": "GrainFM",
         "n_audio_in": 0,
         "n_audio_out": 2,
@@ -79,6 +79,233 @@
                 "max": 1.0,
                 "bus": -1
             }
+        }
+    },
+    "Sine Granulator": {
+        "synth_name": "SineGrain",
+        "n_audio_in": 0,
+        "n_audio_out": 2,
+        "n_midi_in": 1,
+        "n_midi_out": 0,
+        "args": {
+            "pitch": {
+                "desc": "Grain Frequency",
+                "type": "float",
+                "val": 1440.0,
+                "min": 20,
+                "max": 20000.0
+            },
+            "gain": {
+                "desc": "Grain Volume (abs)",
+                "type": "float",
+                "val": 0.25,
+                "min": 0.0,
+                "max": 1.2
+            },
+            "pan": {
+                "desc": "Grain Stereo Panning",
+                "type": "float",
+                "val": 0.0,
+                "min": -1.0,
+                "max": 1.0
+            },
+            "dur": {
+                "desc": "Grain Duration",
+                "type": "float",
+                "val": 0.1,
+                "min": 0.001,
+                "max": 2.0
+            },
+            "atk": {
+                "desc": "Grain Attack",
+                "type": "float",
+                "val": 0.005,
+                "min": 0.0,
+                "max": 1.0
+            },
+            "phase": {
+                "desc": "Grain Initial Phase",
+                "type": "float",
+                "val": 0.0,
+                "min": 0.0,
+                "max": 3.141592653589793238462643383279502884197
+            }
+        }
+    },
+    "AM Granulator": {
+        "synth_name": "AMGrain",
+        "n_audio_in": 0,
+        "n_audio_out": 2,
+        "n_midi_in": 1,
+        "n_midi_out": 0,
+        "args": {
+            "pitch": {
+                "desc": "Grain Frequency",
+                "type": "float",
+                "val": 1440.0,
+                "min": 20,
+                "max": 20000.0
+            },
+            "imod": {
+                "desc": "Modulation Index",
+                "type": "float",
+                "val": 0.5,
+                "min": 0.0,
+                "max": 1.0
+            },
+            "gain": {
+                "desc": "Grain Volume (abs)",
+                "type": "float",
+                "val": 0.25,
+                "min": 0.0,
+                "max": 1.2
+            },
+            "pan": {
+                "desc": "Grain Stereo Panning",
+                "type": "float",
+                "val": 0.0,
+                "min": -1.0,
+                "max": 1.0
+            },
+            "dur": {
+                "desc": "Grain Duration",
+                "type": "float",
+                "val": 0.1,
+                "min": 0.001,
+                "max": 2.0
+            },
+            "atk": {
+                "desc": "Grain Attack",
+                "type": "float",
+                "val": 0.005,
+                "min": 0.0,
+                "max": 1.0
+            },
+            "phase": {
+                "desc": "Grain Initial Phase",
+                "type": "float",
+                "val": 0.0,
+                "min": 0.0,
+                "max": 3.141592653589793238462643383279502884197
+            }
+        }
+    },
+    "FM Granulator": {
+        "synth_name": "FMGrain",
+        "n_audio_in": 0,
+        "n_audio_out": 2,
+        "n_midi_in": 1,
+        "n_midi_out": 0,
+        "args": {
+            "pitch": {
+                "desc": "Grain Frequency",
+                "type": "float",
+                "val": 1440.0,
+                "min": 20,
+                "max": 20000.0
+            },
+            "fmod": {
+                "desc": "Modulation Frequency",
+                "type": "float",
+                "val": 1440.0,
+                "min": 0.001,
+                "max": 20000.0
+            },
+            "imod": {
+                "desc": "Modulation Index",
+                "type": "float",
+                "val": 0.5,
+                "min": 0.0,
+                "max": 100.0
+            },
+            "gain": {
+                "desc": "Grain Volume (abs)",
+                "type": "float",
+                "val": 0.25,
+                "min": 0.0,
+                "max": 1.2
+            },
+            "pan": {
+                "desc": "Grain Stereo Panning",
+                "type": "float",
+                "val": 0.0,
+                "min": -1.0,
+                "max": 1.0
+            },
+            "dur": {
+                "desc": "Grain Duration",
+                "type": "float",
+                "val": 0.1,
+                "min": 0.001,
+                "max": 2.0
+            },
+            "atk": {
+                "desc": "Grain Attack",
+                "type": "float",
+                "val": 0.005,
+                "min": 0.0,
+                "max": 1.0
+            },
+            "phase": {
+                "desc": "Grain Initial Phase",
+                "type": "float",
+                "val": 0.0,
+                "min": 0.0,
+                "max": 3.141592653589793238462643383279502884197
+            }
+        }
+    },
+    "Input Granulator": {
+        "synth_name": "InGrain",
+        "n_audio_in": 1,
+        "n_audio_out": 2,
+        "n_midi_in": 1,
+        "n_midi_out": 0,
+        "args": {
+            "delay": {
+                "desc": "Delay Time (sec)",
+                "type": "float",
+                "val": 0.0,
+                "min": 0.0,
+                "max": 0.2
+            },
+            "gain": {
+                "desc": "Grain Volume (abs)",
+                "type": "float",
+                "val": 0.25,
+                "min": 0.0,
+                "max": 1.2
+            },
+            "pan": {
+                "desc": "Grain Stereo Panning",
+                "type": "float",
+                "val": 0.0,
+                "min": -1.0,
+                "max": 1.0
+            },
+            "dur": {
+                "desc": "Grain Duration",
+                "type": "float",
+                "val": 0.1,
+                "min": 0.001,
+                "max": 2.0
+            },
+            "atk": {
+                "desc": "Grain Attack",
+                "type": "float",
+                "val": 0.005,
+                "min": 0.0,
+                "max": 1.0
+            }
+        }
+    },
+    "MIDINoteOnToTrigger": {
+        "synth_name": "AudioTrigger",
+        "n_audio_in": 0,
+        "n_audio_out": 1,
+        "n_midi_in": 1,
+        "n_midi_out": 0,
+        "args": {
         }
     }
 }

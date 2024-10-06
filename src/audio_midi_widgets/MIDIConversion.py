@@ -97,30 +97,11 @@ class MIDICCToSignal(AudioMIDIWidget):
         # print("RT CC Found!", num, value)
         if num == self.midi_cc:
             self.value = float(value) * (self.max - self.min) / 127. + self.min
-            # print("Midi CC:", "Real Value:", value, "min:", self.min, "Max:", self.max, "Mapped Value:", self.value)
-            # print("self.synth_name", self.synth_name, "self.group.getNodeID()", self.group.getNodeID())
-            # print("self.output_channels[0] at runtime is:", self.bus.getChan(0))
             self.old_synth = self.synth
-            # self.old_synth = self.synth
-            # self.synth.free()
             self.old_synths.append(self.synth.node)
-            busy_nodes = self.server.getBusyNodes()
-            # for node in self.old_synths:
-            #     if node in busy_nodes:
-            #         self.server.freeNode(node)
-            #     self.old_synths.remove(node)
             if self.min <= self.value <= self.max:
                 self.synth = Synth(self.server, self.synth_name, node=None, args=["out_ch_0", self.bus.getChan(0), "value", self.value], addAction="tail", targetID=self.group.getNodeID())
                 self.old_synth.free()
-            # if self.old_synth > 0:
-            #     self.server.freeNode(self.old_synth)
-            #     self.old_synth = -1
-            # for synth in self.old_synths:
-            #     try:
-            #         synth.free()
-            #     except:
-            #         pass
-            # print("self.old_synths:", [s.node for s in self.old_synths])
             self.server.dumpNodeTree()
 
     def __getstate__(self):
@@ -147,3 +128,43 @@ class MIDICCToSignal(AudioMIDIWidget):
         self.set_max.setText(str(self.max))
         # Set Geometry
         self.setGeometry(state["x"], state["y"], state["width"], state["height"])
+
+
+class AudioTrigToMIDINoteOn(AudioMIDIWidget):
+    def __init__(self, server, clock, harmony_manager, parent=None, uuid=None, n_audio_in=0, n_audio_out=0, n_midi_in=0, n_midi_out=1, synth_name=None, synth_args=None):
+        super().__init__(server=server, clock=clock, harmony_manager=harmony_manager, parent=parent, uuid=uuid, n_audio_in=n_audio_in, n_audio_out=n_audio_out, n_midi_in=n_midi_in, n_midi_out=n_midi_out, synth_name="TrigReply", synth_args={"a_tfreq": {"desc": "Frequency (Hz)", "type": "audio", "min": 0.0, "max": 1000, "val": 1.0, "bus": -1}})
+        # self.synth_args = {"a_freq": {"desc": "Frequency (Hz)", "type": "audio", "min": 0.0, "max": 1000, "val": 1.0, "bus": -1}}
+        self.server.add_trigreply_widget(self)
+        # print("self.output_channels[0] at init is:", self.output_channels[0])
+        self.synth = Synth(self.server, self.synth_name, node=None, args=["uuid", self.uuid, "selector_tfreq", 0, "a_tfreq", self.synth_args["a_tfreq"]["val"]], addAction="head", targetID=self.group.getNodeID())
+
+        self.lay = QVBoxLayout()
+        self.layout().addLayout(self.lay)
+        self.initArgs()
+
+    def propagate_trig(self):
+        for widget in self.midi_destinations:
+            if hasattr(widget, "processNote"):
+                widget.processNote(Note(duration=0))
+
+    def freeSynth(self):
+        self.server.remove_trigreply_widget(self)
+        self.synth.free()
+
+    def processRTMIDINote(self, note, velocity):
+        pass
+
+    def __getstate__(self):
+        d = super().__getstate__()
+        d.update({
+            "uuid": self.uuid
+        })
+        return d
+
+    def __setstate__(self, state):
+        super().__setstate__(state)
+        # UUID
+        self.uuid = state["uuid"]
+        # Set Geometry
+        self.setGeometry(state["x"], state["y"], state["width"], state["height"])
+        self.computeSynthArgs()

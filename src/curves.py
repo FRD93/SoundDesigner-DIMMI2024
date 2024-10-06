@@ -531,7 +531,7 @@ class CurveXY(QLabel):
                 self.curve[i] = 10 ** y_value_log  # Inverso della trasformazione logaritmica
             else:
                 self.curve[i] = functions.mmap(y, [self.height(), 0], [self.minY, self.maxY])
-            c_print("green", f"self.curve is {self.curve}")
+            # c_print("green", f"self.curve is {self.curve}")
             self.x_values[i] = functions.mmap(x, [0, self.width()], [self.minX, self.maxX]) * self.zoom
 
     def resizeEvent(self, event):

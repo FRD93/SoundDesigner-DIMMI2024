@@ -200,7 +200,7 @@ class PatchArea(QLabel):
                                 target_node = sources[-1]
                             # Metti il widget After target_node
                             has_to_break = False
-                            for node_widget in self.patch.audio_widgets + self.patch.subpatch_widgets:
+                            for node_widget in self.patch.audio_widgets + self.patch.audio_midi_widgets + self.patch.subpatch_widgets:  # TODO: aggiunto " + self.patch.audio_midi_widgets"
                                 if node_widget.getUUID() == target_node:
                                     for cable in self.audio_cables:
                                         if target_node == cable.widget_out.getUUID():  # Trova il cavo associato
@@ -808,15 +808,19 @@ class Patch(QWidget):
         for kind in self.widgets["audio_midi"].keys():
             if class_name in self.widgets["audio_midi"][kind].keys():
                 class_kind = kind
-        data = self.widgets["audio_midi"][class_kind][class_name]
-        instance = AudioMIDIWidget(server=scsynth, clock=self.main_window.clock, harmony_manager=self.context.harmony_manager, parent=self.patch_area, synth_name=data["synth_name"], n_audio_in=data["n_audio_in"], n_audio_out=data["n_audio_out"], n_midi_in=data["n_midi_in"], n_midi_out=data["n_midi_out"], synth_args=data["args"])
-        instance.setGeometry(20, 20, instance.width(), instance.height())
-        instance.show()
-        self.audio_midi_widgets.append(instance)
-        self.parent.timeline.populate_widgets()
+        if class_kind == "":
+            self.add_custom_audio_midi_widget(class_name)
+        else:
+            data = self.widgets["audio_midi"][class_kind][class_name]
+            instance = AudioMIDIWidget(server=scsynth, clock=self.main_window.clock, harmony_manager=self.context.harmony_manager, parent=self.patch_area, synth_name=data["synth_name"], n_audio_in=data["n_audio_in"], n_audio_out=data["n_audio_out"], n_midi_in=data["n_midi_in"], n_midi_out=data["n_midi_out"], synth_args=data["args"])
+            instance.setGeometry(20, 20, instance.width(), instance.height())
+            instance.show()
+            self.audio_midi_widgets.append(instance)
+            self.parent.timeline.populate_widgets()
 
-    def add_custom_audio_midi_widget(self):
-        class_name = self.sender().text()
+    def add_custom_audio_midi_widget(self, widget_name):
+        c_print("green", f"adding custom AudioMIDI Widget: {widget_name}")
+        class_name = widget_name
         class_ = eval(class_name)
         instance = class_(server=scsynth, clock=self.main_window.clock, harmony_manager=self.context.harmony_manager, parent=self.patch_area)
         instance.setGeometry(20, 20, instance.width(), instance.height())
@@ -2424,15 +2428,18 @@ class SubPatch(QWidget):
         for kind in self.widgets["audio_midi"].keys():
             if class_name in self.widgets["audio_midi"][kind].keys():
                 class_kind = kind
-        data = self.widgets["audio_midi"][class_kind][class_name]
-        instance = AudioMIDIWidget(server=scsynth, clock=self.main_window.clock, harmony_manager=self.context.harmony_manager, parent=self.patch_area, synth_name=data["synth_name"], n_audio_in=data["n_audio_in"], n_audio_out=data["n_audio_out"], n_midi_in=data["n_midi_in"], n_midi_out=data["n_midi_out"], synth_args=data["args"])
-        instance.setGeometry(20, 20, instance.width(), instance.height())
-        instance.show()
-        self.audio_midi_widgets.append(instance)
-        self.parent.timeline.populate_widgets()
+        if class_kind == "":
+            self.add_custom_audio_midi_widget(class_name)
+        else:
+            data = self.widgets["audio_midi"][class_kind][class_name]
+            instance = AudioMIDIWidget(server=scsynth, clock=self.main_window.clock, harmony_manager=self.context.harmony_manager, parent=self.patch_area, synth_name=data["synth_name"], n_audio_in=data["n_audio_in"], n_audio_out=data["n_audio_out"], n_midi_in=data["n_midi_in"], n_midi_out=data["n_midi_out"], synth_args=data["args"])
+            instance.setGeometry(20, 20, instance.width(), instance.height())
+            instance.show()
+            self.audio_midi_widgets.append(instance)
+            self.parent.timeline.populate_widgets()
 
-    def add_custom_audio_midi_widget(self):
-        class_name = self.sender().text()
+    def add_custom_audio_midi_widget(self, widget_name):
+        class_name = widget_name
         class_ = eval(class_name)
         instance = class_(server=scsynth, clock=self.main_window.clock, harmony_manager=self.context.harmony_manager, parent=self.patch_area)
         instance.setGeometry(20, 20, instance.width(), instance.height())

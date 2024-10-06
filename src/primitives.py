@@ -211,6 +211,9 @@ class ParameterChange(QUndoCommand):
             self.widget.synth_args = deepcopy(args_copy)
             if self.widget.type == "Audio":
                 self.widget.resetSynthArgs()
+            if self.widget.type == "AudioMIDI":
+                if isinstance(self.widget.synth, Synth):
+                    self.widget.synth.set(self.key, self.old_value)
             try:
                 self.widget.patch_area.patch.update_subpatch_instances()
                 c_print("green", "update_subpatch_instances successfull")
@@ -230,6 +233,9 @@ class ParameterChange(QUndoCommand):
         self.widget.synth_args = deepcopy(args_copy)
         if self.widget.type == "Audio":
             self.widget.resetSynthArgs()
+        if self.widget.type == "AudioMIDI":
+            if isinstance(self.widget.synth, Synth):
+                self.widget.synth.set(self.key, self.value)
         try:
             self.widget.patch_area.patch.update_subpatch_instances()
             # c_print("green", "update_subpatch_instances successfull")
@@ -533,18 +539,15 @@ class SimpleWidget(QLabel):
             self.patch_area.lower_cables()
             event.accept()
             return
-        # TODO: Check if MIDI inlet is pressed with a MIDICable ON to connect the cable
         if self.checkMIDIInletPressed(event, subtractGlobalPos) != -1:
             # print("MIDI Inlet Pressed")
             if self.patch_area.is_placing_cable():
                 # command = PlaceCable(self.patch_area, self.checkMIDIInletPressed(event), "MIDI")
                 command = PlaceCable(self, self.checkMIDIInletPressed(event), "MIDI")
                 self.get_undo_stack().push(command)
-        # TODO: Check if MIDI outlet is pressed to add a MIDICable
         if self.checkMIDIOutletPressed(event, subtractGlobalPos) != -1:
             # print("MIDI Outlet Pressed")
-            self.addDestination(event, self, self.checkMIDIOutletPressed(event) + self.n_out,
-                                type="MIDI")  # TODO: check " + self.n_out"
+            self.addDestination(event, self, self.checkMIDIOutletPressed(event) + self.n_out, type="MIDI")
             self.patch_area.lower_cables()
             event.accept()
             return
@@ -979,13 +982,11 @@ class AudioWidget(SimpleWidget):
                 if self.synth_args[arg]["type"] == "audio":
                     if int(self.synth_args[arg]["bus"]) > 0:
                         self.synth.map(arg, self.synth_args[arg]["bus"])
-                        self.synth.set(arg.replace("a_", "selector_"),
-                                       1)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Lag al Bus mero
+                        self.synth.set(arg.replace("a_", "selector_"), 1)
                     else:
                         try:
                             self.synth.set(arg, float(self.synth_args[arg]["val"]))
-                            self.synth.set(arg.replace("a_", "selector_"),
-                                           0)  # Prevedere un selettore nei SynthDef che cambi un SelectX.ar dal Bus al Lag
+                            self.synth.set(arg.replace("a_", "selector_"), 0)
                         except:
                             c_print("red", f"ERROR: Widget resetSynthArgs (Bad text: {self.synth_args[arg]['val']})")
                 # Buffer Parameter
@@ -1140,7 +1141,8 @@ class MIDIWidget(SimpleWidget):
 
     def propagateMIDINote(self, note):
         for widget in self.midi_destinations:
-            widget.processNote(note)
+            if hasattr(widget, "processNote"):
+                widget.processNote(note)
 
     def getSettings(self):
         d = {
@@ -1242,10 +1244,23 @@ class AudioMIDIWidget(SimpleWidget):
             args.append(channel)
         for arg in self.synth_args.keys():
             if self.synth_args[arg]["type"] == "audio":
-                if self.synth_args[arg]["bus"] < 0:
+                if self.synth_args[arg]["bus"] <= 0:
                     val = float(self.synth_args[arg]["val"])
                     args.append(arg)
                     args.append(val)
+                    if isinstance(self.synth, Synth):
+                        self.synth.set(arg.replace("a_", "selector_"), 0)
+                        self.synth.set(arg, self.synth_args[arg]["val"])
+                    arg = arg.replace("a_", "selector_")
+                    args.append(arg)
+                    args.append(0)
+                else:
+                    if isinstance(self.synth, Synth):
+                        self.synth.map(arg, self.synth_args[arg]["bus"])
+                        self.synth.set(arg.replace("a_", "selector_"), 1)
+                    arg = arg.replace("a_", "selector_")
+                    args.append(arg)
+                    args.append(1)
             else:
                 try:
                     val = float(self.synth_args[arg]["val"])
@@ -1253,6 +1268,8 @@ class AudioMIDIWidget(SimpleWidget):
                         val = int(val)
                     args.append(arg)
                     args.append(val)
+                    if isinstance(self.synth, Synth):
+                        self.synth.set(arg, val)
                 except:
                     pass
         return args
@@ -1310,8 +1327,7 @@ class AudioMIDIWidget(SimpleWidget):
                 self.note_synths[str(note.getNote())] = None
             except:
                 pass
-            self.note_synths[str(note.getNote())] = Synth(self.server, self.synth_name, node=None, args=params,
-                                                          addAction="head", targetID=self.group.getNodeID())
+            self.note_synths[str(note.getNote())] = Synth(self.server, self.synth_name, node=None, args=params, addAction="head", targetID=self.group.getNodeID())
             for arg in self.synth_args.keys():
                 if self.synth_args[arg]["type"] == "audio":
                     if int(self.synth_args[arg]["bus"]) > 0:
@@ -1337,10 +1353,16 @@ class AudioMIDIWidget(SimpleWidget):
         params.append("amp")
         params.append(amplitude)
         params.append("a_dur")
-        params.append(duration)
+        if duration > 0:
+            params.append(duration)
+        else:
+            try:
+                params.append(self.synth_args["a_dur"]["val"])
+            except:
+                params.append(duration)
 
-        # IMPORTANT: if a Synth has "a_dur" parameter, it means than it owns a DoneAction=2, which means it will free itself after duration
-        if not "a_dur" in self.synth_args.keys():
+        # IMPORTANT: if a Synth has "a_dur" or "dur" parameter, it means than it owns a DoneAction=2, which means it will autonomously free itself after duration
+        if not "a_dur" in self.synth_args.keys() and not "dur" in self.synth_args.keys():
             if self.note_synths[str(note.getNote())] is not None:
                 self.note_synths[str(note.getNote())].set("gate", 0)  # release synth if any
                 self.note_synths[str(note.getNote())] = None
@@ -1349,7 +1371,10 @@ class AudioMIDIWidget(SimpleWidget):
                 del self.note_synths[str(note.getNote())]
                 self.note_synths[str(note.getNote())] = None
 
+        # Instantiate synth with args
+        print(self.group.getNodeID(), params)
         self.note_synths[str(note.getNote())] = Synth(self.server, self.synth_name, node=None, args=params, addAction="head", targetID=self.group.getNodeID())
+        # Map audio busses to arguments as needed
         for arg in self.synth_args.keys():
             if self.synth_args[arg]["type"] == "audio":
                 if int(self.synth_args[arg]["bus"]) > 0:
@@ -1357,8 +1382,8 @@ class AudioMIDIWidget(SimpleWidget):
 
         time.sleep(duration)
 
-        # IMPORTANT: if a Synth has "a_dur" parameter, it means than it owns a DoneAction=2, which means it will free itself after duration
-        if not "a_dur" in self.synth_args.keys():
+        # IMPORTANT: if a Synth has "a_dur" or "dur" parameter, it means than it owns a DoneAction=2, which means it will free itself after duration
+        if not "a_dur" in self.synth_args.keys() and not "dur" in self.synth_args.keys():
             if self.note_synths[str(note.getNote())] is not None:
                 self.note_synths[str(note.getNote())].set("gate", 0)
                 self.note_synths[str(note.getNote())] = None
@@ -1373,10 +1398,13 @@ class AudioMIDIWidget(SimpleWidget):
 
     def change_param(self, key, chan):
         self.synth_args[key]["bus"] = chan
+        self.computeSynthArgs()
         # print("Param {} changed to bus {}".format(key, chan))
 
     def set_param(self, key, val):
         self.synth_args[key]["val"] = val
+        if isinstance(self.synth, Synth):
+            self.synth.set(key, val)
 
     def getSettings(self):
         inputs = {}
@@ -1852,6 +1880,9 @@ class AudioCable(SimpleCable):
             settings = self.widget_in.getSettings()
             settings["Parameters"][self.widget_in_id]["bus"] = -1
             self.widget_in.setSettings(settings)
+            if issubclass(self.widget_in.__class__, AudioMIDIWidget):
+                print("AudioMIDIWidget eheheh")
+                self.widget_in.computeSynthArgs()
         else:
             try:
                 self.widget_in.synth.set(f"in_ch_{self.widget_in_id}", scsynth.getDefaultInBus())
