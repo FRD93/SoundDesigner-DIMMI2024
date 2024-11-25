@@ -1331,7 +1331,7 @@ class MainWindow(QMainWindow):
         for audio_widget in self.patch.audio_widgets:
             if audio_widget.synth is not None:
                 audio_widget.synth.free()
-        filename = QFileDialog.getOpenFileName(None, directory="/Users/francescodani/Documents/SoundDesigner/SoundDesigner/src/patches/", filter="Patch (*.p)")
+        filename = QFileDialog.getOpenFileName(None, directory="/Users/francescodani/Documents/SoundDesigner/SoundDesigner/src/examples_DIMMI2024/", filter="Patch (*.p)")
         if os.path.exists(filename[0]):
             with open(filename[0], "rb") as f:
                 self.main_layout.removeWidget(self.patch)
@@ -2200,7 +2200,6 @@ class SubPatch(QWidget):
             subpatch_widget.reinitUI()
 
     def getIO(self):
-        print("Ehi diocane ci sono", self.audio_widgets)
         ins = 0
         outs = 0
         for wi in self.audio_widgets:

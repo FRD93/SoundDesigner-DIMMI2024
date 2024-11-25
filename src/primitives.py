@@ -1372,7 +1372,7 @@ class AudioMIDIWidget(SimpleWidget):
                 self.note_synths[str(note.getNote())] = None
 
         # Instantiate synth with args
-        print(self.group.getNodeID(), params)
+        print(self.group.getNodeID(), self.synth_name, params)
         self.note_synths[str(note.getNote())] = Synth(self.server, self.synth_name, node=None, args=params, addAction="head", targetID=self.group.getNodeID())
         # Map audio busses to arguments as needed
         for arg in self.synth_args.keys():
